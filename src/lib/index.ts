@@ -1,3 +1,4 @@
 // Reexport your entry components here
 import Editor from './Editor.svelte';
-export { Editor };
+import { splitText } from './splitFunction.js';
+export { Editor, splitText };

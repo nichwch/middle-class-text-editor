@@ -1,5 +1,5 @@
 <script>
-	import { Editor } from '$lib';
+	import { Editor, splitText } from '$lib';
 	let editorContents = `Hello world 
 
 This is some example editor content that spans multiple lines.
@@ -28,11 +28,14 @@ As you can see, we're able to apply some cool styles to different blocks.`;
 	<h1 class="text-2xl mb-3">PSEUDO WYSIWYG</h1>
 	<p class="mt-3"><b>pseudo:</b> kind of ish</p>
 	<p><b>WYSIWYG:</b> What You See Is What You Get</p>
-	<p class="mt-3">
+	<p class="mt-3 mb-5">
 		Pseudo WYSIWYG is an editor library that sprinkles some rich text features on top of a plain
 		textarea, without becoming a full fledged full-text editor, hopefully gaining most of the
 		advantages without all of the costs.
 	</p>
 
-	<Editor addEditorClasses="mt-5" bind:content={editorContents} />
+	<Editor
+		bind:content={editorContents}
+		splitFunc={(/** @type {string} */ text) => text.split('\n')}
+	/>
 </div>
