@@ -18,11 +18,15 @@ As you can see, we're able to apply some cool styles to different blocks.`;
 	<h1 class="text-2xl mb-3">PSEUDO WYSIWYG</h1>
 	<p class="mt-3"><b>pseudo:</b> kind of ish</p>
 	<p><b>WYSIWYG:</b> What You See Is What You Get</p>
-	<p class="mt-3 mb-5">
+	<p class="mt-3">
 		Pseudo WYSIWYG is an editor library that sprinkles some rich text features on top of a plain
 		textarea, without becoming a full fledged full-text editor, hopefully gaining most of the
 		advantages without all of the costs.
 	</p>
+	<p class="mt-3 mb-5">
+		It's not a rich text editor. It's middle class. It's a text editor for your average joe.
+	</p>
+	<p class="mt-3 mb-5">A rich text editor? In this economy?</p>
 
 	<Editor
 		bind:content={editorContents}
