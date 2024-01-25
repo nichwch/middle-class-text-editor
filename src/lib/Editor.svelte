@@ -39,7 +39,7 @@
 
 <div class="relative h-96 overflow-y-auto border border-black" bind:this={editorRef}>
 	<div class="absolute h-full w-full top-0">
-		<div class="w-full h-full p-3 absolute top-0 whitespace-pre-line break-after-right">
+		<div class="leading-6 w-full h-full p-3 absolute top-0 whitespace-pre-line break-after-right">
 			{#each formatted_paragraphs as paragraph, paragraph_index}
 				{#if paragraph.length === 0}
 					<br />
@@ -47,10 +47,7 @@
 					<div class="relative block whitespace-pre-wrap">
 						{#each paragraph as clause, clause_index}
 							{#if keywords.includes(clause)}
-								<span
-									id="underblock-{paragraph_index},{clause_index}"
-									class="bg-green-400 outline outline-black">{clause}</span
-								>
+								<span id="underblock-{paragraph_index},{clause_index}">{clause}</span>
 							{:else}
 								<span>{clause}</span>
 							{/if}
@@ -61,23 +58,25 @@
 		</div>
 		<div
 			contenteditable="true"
-			class="w-full min-h-full p-3 resize-none block text-red-900 absolute top-0 whitespace-pre-line break-after-right caret-black z-10 bg-transparent"
+			class="w-full min-h-full p-3 leading-6 resize-none block text-red-900 absolute top-0 whitespace-pre-line break-after-right caret-black z-10 bg-transparent"
 			bind:innerText={content}
 		/>
-		{#each formatted_paragraphs as paragraph, paragraph_index}
-			{#each paragraph as clause, clause_index}
-				{#if keywords.includes(clause)}
-					<span
-						id="inline-block overblock-{paragraph_index},{clause_index}"
-						class="z-20 bg-red-200 hover:bg-red-300 outline outline-black"
-						style:position="absolute"
-						style:top="{keywordLocations[`${paragraph_index},${clause_index}`]?.top}px"
-						style:left="{keywordLocations[`${paragraph_index},${clause_index}`]?.left}px"
-					>
-						{clause}
-					</span>
-				{/if}
+		<div class="leading-6">
+			{#each formatted_paragraphs as paragraph, paragraph_index}
+				{#each paragraph as clause, clause_index}
+					{#if keywords.includes(clause)}
+						<span
+							id="inline-block overblock-{paragraph_index},{clause_index}"
+							class="z-20 leading-4 bg-red-200 hover:bg-red-300 outline outline-black"
+							style:position="absolute"
+							style:top="{keywordLocations[`${paragraph_index},${clause_index}`]?.top}px"
+							style:left="{keywordLocations[`${paragraph_index},${clause_index}`]?.left}px"
+						>
+							{clause}
+						</span>
+					{/if}
+				{/each}
 			{/each}
-		{/each}
+		</div>
 	</div>
 </div>

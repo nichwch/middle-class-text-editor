@@ -2,11 +2,11 @@
 	import { Editor, splitText } from '$lib';
 	let editorContents = `Hello world 
 
-This is some example editor conten keyword1 that spans multiple lines. keyword1
+This is some example editor content keyword1 that spans multiple lines. keyword1
 
 keyword1 
 
-This is some example editor conten keyword1 that spans multiple lines. keyword2
+This is some example editor content keyword1 that spans multiple lines. keyword2
 
 keyword2 
 
@@ -23,7 +23,11 @@ As you can see, we're able to apply some cool styles to different blocks.`;
 		textarea, without becoming a full fledged full-text editor, hopefully gaining most of the
 		advantages without all of the costs.
 	</p>
-	<p class="mt-3 mb-5">
+	<p class="mt-3">
+		I feel like you can make some joke around rich text editors and this being slightly less than
+		that, maybe play off the wealth connotation of rich. Workshopping a few jokes below.
+	</p>
+	<p class="mt-3">
 		It's not a rich text editor. It's middle class. It's a text editor for your average joe.
 	</p>
 	<p class="mt-3 mb-5">A rich text editor? In this economy?</p>
