@@ -2,23 +2,13 @@
 	import { Editor, splitText } from '$lib';
 	let editorContents = `Hello world 
 
-This is some example editor content that spans multiple lines.
+This is some example editor conten keyword1 that spans multiple lines. keyword1
 
-As you can see, we're able to apply some cool styles to different blocks.
-Hello world 
+keyword1 
 
-This is some example editor content that spans multiple lines.
+This is some example editor conten keyword1 that spans multiple lines. keyword2
 
-As you can see, we're able to apply some cool styles to different blocks.
-Hello world 
-
-This is some example editor content that spans multiple lines.
-
-As you can see, we're able to apply some cool styles to different blocks.
-
-Hello world 
-
-This is some example editor content that spans multiple lines.
+keyword2 
 
 As you can see, we're able to apply some cool styles to different blocks.`;
 	$: console.log({ editorContents });
@@ -36,6 +26,7 @@ As you can see, we're able to apply some cool styles to different blocks.`;
 
 	<Editor
 		bind:content={editorContents}
+		keywords={['keyword1', 'keyword2']}
 		splitFunc={(/** @type {string} */ text) => text.split('\n')}
 	/>
 </div>
