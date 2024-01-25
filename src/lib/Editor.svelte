@@ -57,7 +57,7 @@
 			{/each}
 		</div>
 		<div
-			contenteditable="true"
+			contenteditable="plaintext-only"
 			class="w-full min-h-full p-3 leading-6 resize-none block text-red-900 absolute top-0 whitespace-pre-line break-after-right caret-black z-10 bg-transparent"
 			bind:innerText={content}
 		/>
