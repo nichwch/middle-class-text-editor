@@ -1,18 +1,33 @@
 <script lang="ts">
-	import { afterUpdate } from 'svelte';
+	import { SvelteComponent, afterUpdate } from 'svelte';
 
 	export let splitFunc: (str: string) => string[];
 	export let content: string;
-	export let keywords: string[];
+	export let keywordMap: {
+		[key: string]: {
+			component?: SvelteComponent;
+			includeFunction?: (str: string) => boolean;
+		};
+	} = {};
 
-	const regex = new RegExp(`(${keywords.join('|')})`, 'g');
+	$: keywords = Object.keys(keywordMap) || [];
+	$: regex = new RegExp(`(${keywords.join('|')})`, 'g');
 
-	const isAKeyword = (str: string): boolean => {
-		if (keywords.includes(str)) return true;
+	const getKeywordMatch = (str: string): string | undefined => {
+		if (keywords.includes(str)) return str;
 		for (const keyword of keywords) {
-			if (new RegExp(keyword).test(str)) return true;
+			if (new RegExp(keyword).test(str)) {
+				const includeFunction = keywordMap[keyword].includeFunction;
+				if (includeFunction !== undefined) {
+					const included = includeFunction(str);
+					if (included) return keyword;
+					else return undefined;
+				} else {
+					return keyword;
+				}
+			}
 		}
-		return false;
+		return undefined;
 	};
 
 	$: formatted_paragraphs = splitFunc(content).map((para) => {
@@ -25,18 +40,13 @@
 		keywordLocations = {};
 		formatted_paragraphs.forEach((paragraph, paragraph_index) => {
 			paragraph.forEach((clause, clause_index) => {
-				if (isAKeyword(clause)) {
+				if (getKeywordMatch(clause)) {
 					const underblock = document.getElementById(
 						`underblock-${paragraph_index},${clause_index}`
 					);
-					const clientRect = underblock?.getClientRects()?.[0];
-					console.log('CLIENT RECTS', clientRect);
-					console.log(underblock.offsetParent);
-					const editorRect = editorRef?.getBoundingClientRect();
-					console.log(clientRect);
 					keywordLocations[`${paragraph_index},${clause_index}`] = {
 						top: underblock?.offsetTop || 0,
-						left: underblock.offsetLeft || 0
+						left: underblock?.offsetLeft || 0
 					};
 				}
 			});
@@ -48,6 +58,7 @@
 
 <div class="relative h-96 overflow-y-auto border border-black" bind:this={editorRef}>
 	<div class="absolute h-full w-full top-0">
+		<!-- THE UNDERLAY -->
 		<div class="leading-6 w-full h-full p-3 absolute top-0 whitespace-pre-line break-after-right">
 			{#each formatted_paragraphs as paragraph, paragraph_index}
 				{#if paragraph.length === 0}
@@ -55,7 +66,7 @@
 				{:else}
 					<div class="block whitespace-pre-wrap">
 						{#each paragraph as clause, clause_index}
-							{#if isAKeyword(clause)}
+							{#if getKeywordMatch(clause) !== undefined}
 								<div class="inline-block" id="underblock-{paragraph_index},{clause_index}">
 									{clause}
 								</div>
@@ -67,26 +78,43 @@
 				{/if}
 			{/each}
 		</div>
+		<!-- THE EDITOR -->
 		<div
 			contenteditable="plaintext-only"
 			class="w-full min-h-full p-3 leading-6 resize-none block text-red-900 absolute top-0 whitespace-pre-line break-after-right caret-black z-10 bg-transparent"
 			bind:innerText={content}
 		/>
+		<!-- THE OVERLAY -->
 		<div
 			class="absolute h-[100px] top-0 w-full h-fullp-3 whitespace-pre-line break-after-right leading-6"
 		>
 			{#each formatted_paragraphs as paragraph, paragraph_index}
 				{#each paragraph as clause, clause_index}
-					{#if isAKeyword(clause)}
-						<span
-							id="inline-block overblock-{paragraph_index},{clause_index}"
-							class="z-20 leading-6 bg-red-200 hover:bg-red-300 outline outline-black"
-							style:position="absolute"
-							style:top="{keywordLocations[`${paragraph_index},${clause_index}`]?.top}px"
-							style:left="{keywordLocations[`${paragraph_index},${clause_index}`]?.left}px"
-						>
-							{clause}
-						</span>
+					{@const match = getKeywordMatch(clause)}
+
+					{#if match !== undefined}
+						{@const component = keywordMap[match].component}
+						{#if component}
+							<span
+								class="z-20 leading-6"
+								style:position="absolute"
+								style:top="{keywordLocations[`${paragraph_index},${clause_index}`]?.top}px"
+								style:left="{keywordLocations[`${paragraph_index},${clause_index}`]?.left}px"
+							>
+								<svelte:component this={component}>
+									{clause}
+								</svelte:component>
+							</span>
+						{:else}
+							<span
+								class="z-20 leading-6 bg-red-200 hover:bg-red-300 outline outline-black"
+								style:position="absolute"
+								style:top="{keywordLocations[`${paragraph_index},${clause_index}`]?.top}px"
+								style:left="{keywordLocations[`${paragraph_index},${clause_index}`]?.left}px"
+							>
+								{clause}
+							</span>
+						{/if}
 					{/if}
 				{/each}
 			{/each}

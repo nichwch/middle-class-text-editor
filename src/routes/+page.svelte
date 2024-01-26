@@ -1,5 +1,6 @@
 <script>
 	import { Editor, splitText } from '$lib';
+	import MentionComponent from './MentionComponent.svelte';
 	let editorContents = `Hello world 
 
 This is some example editor content keyword1 that spans multiple lines. keyword1
@@ -18,6 +19,8 @@ As you can see, we're able to apply some cool styles to different blocks.`;
 
 <div class="w-full px-5 mt-10 md:mx-auto md:w-[36rem]">
 	<h1 class="text-2xl mb-3">PSEUDO WYSIWYG</h1>
+	<h2><a class="link" href="https://nicholaschen.io">By Nicholas Chen</a></h2>
+	<h2><a class="link" href="https://github.com/nichwch/pseudo-wysiwyg">source</a></h2>
 	<p class="mt-3"><b>pseudo:</b> kind of ish</p>
 	<p><b>WYSIWYG:</b> What You See Is What You Get</p>
 
@@ -37,9 +40,23 @@ As you can see, we're able to apply some cool styles to different blocks.`;
 
 	<Editor
 		bind:content={editorContents}
-		keywords={['keyword1', 'keyword2', '@\\w+']}
+		keywordMap={{
+			keyword1: {},
+			keyword2: {},
+			'@\\w+': {
+				component: MentionComponent,
+				includeFunction: (/** @type {string} */ str) => {
+					const recognizedNames = ['alice', 'bob', 'nick'];
+					const namesWithAt = recognizedNames.map((name) => `@${name}`);
+					if (namesWithAt.includes(str)) return true;
+					return false;
+				}
+			}
+		}}
 		splitFunc={(/** @type {string} */ text) => text.split('\n')}
-	/>
+	>
+		<div slot="keyword1"><slot /></div>
+	</Editor>
 
 	<p class="mt-3">
 		Pseudo WYSIWYG is an editor library that sprinkles some rich text features on top of a plain
