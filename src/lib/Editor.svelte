@@ -33,9 +33,9 @@
 	$: formatted_paragraphs = splitFunc(content).map((para) => {
 		return para.split(regex);
 	});
-	$: console.log(formatted_paragraphs);
 	let keywordLocations: { [key: string]: { top: number; left: number } } = {};
-	let editorRef: Element | null = null;
+	let editorScrollHeight = 0;
+	let textareaRef: Element | null = null;
 	afterUpdate(() => {
 		keywordLocations = {};
 		formatted_paragraphs.forEach((paragraph, paragraph_index) => {
@@ -53,10 +53,9 @@
 		});
 		keywordLocations = keywordLocations;
 	});
-	$: console.log({ keywordLocations });
 </script>
 
-<div class="relative h-96 overflow-y-auto border border-black" bind:this={editorRef}>
+<div class="relative h-96 overflow-y-auto border border-black">
 	<div class="absolute h-full w-full top-0">
 		<!-- THE UNDERLAY -->
 		<div class="leading-6 w-full h-full p-3 absolute top-0 whitespace-pre-line break-after-right">
@@ -79,15 +78,17 @@
 			{/each}
 		</div>
 		<!-- THE EDITOR -->
-		<div
-			contenteditable="plaintext-only"
+		<textarea
+			style:height="{editorScrollHeight}px"
 			class="w-full min-h-full p-3 leading-6 resize-none block absolute top-0 whitespace-pre-line break-after-right caret-black z-10 bg-transparent"
-			bind:innerText={content}
+			bind:value={content}
+			bind:this={textareaRef}
+			on:input={() => {
+				editorScrollHeight = textareaRef?.scrollHeight || 0;
+			}}
 		/>
 		<!-- THE OVERLAY -->
-		<div
-			class="absolute h-[100px] top-0 w-full h-fullp-3 whitespace-pre-line break-after-right leading-6"
-		>
+		<div class="absolute top-0 w-full h-fullp-3 whitespace-pre-line break-after-right leading-6">
 			{#each formatted_paragraphs as paragraph, paragraph_index}
 				{#each paragraph as clause, clause_index}
 					{@const match = getKeywordMatch(clause)}

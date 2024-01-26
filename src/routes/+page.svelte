@@ -8,7 +8,6 @@ Here are the tasks for the week:
 - @nick will be working on the #svelte-refactor project
 - @alice and @bob will be working on the #e2e-encryption project
 `;
-	$: console.log({ editorContents });
 </script>
 
 <div class="w-full px-5 mt-10 md:mx-auto md:w-[36rem]">
@@ -38,7 +37,7 @@ Here are the tasks for the week:
 			'@\\S+': {
 				component: MentionComponent,
 				includeFunction: (/** @type {string} */ str) => {
-					const recognizedNames = ['alice-', 'bob', 'nick'];
+					const recognizedNames = ['alice', 'bob', 'nick'];
 					const namesWithAt = recognizedNames.map((name) => `@${name}`);
 					if (namesWithAt.includes(str)) return true;
 					return false;
@@ -55,9 +54,7 @@ Here are the tasks for the week:
 			}
 		}}
 		splitFunc={(/** @type {string} */ text) => text.split('\n')}
-	>
-		<div slot="keyword1"><slot /></div>
-	</Editor>
+	/>
 
 	<p class="mt-3">
 		Pseudo WYSIWYG is an editor library that sprinkles some rich text features on top of a plain
