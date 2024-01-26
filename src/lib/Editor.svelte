@@ -7,8 +7,15 @@
 
 	const regex = new RegExp(`(${keywords.join('|')})`, 'g');
 
-	$: paragraphs = splitFunc(content);
-	$: formatted_paragraphs = paragraphs.map((para) => {
+	const isAKeyword = (str: string): boolean => {
+		if (keywords.includes(str)) return true;
+		for (const keyword of keywords) {
+			if (new RegExp(keyword).test(str)) return true;
+		}
+		return false;
+	};
+
+	$: formatted_paragraphs = splitFunc(content).map((para) => {
 		return para.split(regex);
 	});
 	$: console.log(formatted_paragraphs);
@@ -18,7 +25,7 @@
 		keywordLocations = {};
 		formatted_paragraphs.forEach((paragraph, paragraph_index) => {
 			paragraph.forEach((clause, clause_index) => {
-				if (keywords.includes(clause)) {
+				if (isAKeyword(clause)) {
 					const underblock = document.getElementById(
 						`underblock-${paragraph_index},${clause_index}`
 					);
@@ -46,7 +53,7 @@
 				{:else}
 					<div class="relative block whitespace-pre-wrap">
 						{#each paragraph as clause, clause_index}
-							{#if keywords.includes(clause)}
+							{#if isAKeyword(clause)}
 								<span id="underblock-{paragraph_index},{clause_index}">{clause}</span>
 							{:else}
 								<span>{clause}</span>
@@ -64,7 +71,7 @@
 		<div class="leading-6">
 			{#each formatted_paragraphs as paragraph, paragraph_index}
 				{#each paragraph as clause, clause_index}
-					{#if keywords.includes(clause)}
+					{#if isAKeyword(clause)}
 						<span
 							id="inline-block overblock-{paragraph_index},{clause_index}"
 							class="z-20 leading-4 bg-red-200 hover:bg-red-300 outline outline-black"

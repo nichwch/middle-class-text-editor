@@ -4,6 +4,8 @@
 
 This is some example editor content keyword1 that spans multiple lines. keyword1
 
+@hello @nick @test @recurse
+
 keyword1 
 
 This is some example editor content keyword1 that spans multiple lines. keyword2
@@ -35,7 +37,47 @@ As you can see, we're able to apply some cool styles to different blocks.`;
 
 	<Editor
 		bind:content={editorContents}
-		keywords={['keyword1', 'keyword2']}
+		keywords={['keyword1', 'keyword2', '@\\w+']}
 		splitFunc={(/** @type {string} */ text) => text.split('\n')}
 	/>
+
+	<p class="mt-3">
+		Pseudo WYSIWYG is an editor library that sprinkles some rich text features on top of a plain
+		textarea, without becoming a full fledged full-text editor, hopefully gaining most of the
+		advantages without all of the costs.
+	</p>
+	<p class="mt-3">
+		I feel like you can make some joke around rich text editors and this being slightly less than
+		that, maybe play off the wealth connotation of rich. Workshopping a few jokes below.
+	</p>
+	<p class="mt-3">
+		It's not a rich text editor. It's middle class. It's a text editor for your average joe.
+	</p>
+	<p class="mt-3 mb-5">A rich text editor? In this economy?</p>
+	<p class="mt-3">
+		Pseudo WYSIWYG is an editor library that sprinkles some rich text features on top of a plain
+		textarea, without becoming a full fledged full-text editor, hopefully gaining most of the
+		advantages without all of the costs.
+	</p>
+	<p class="mt-3">
+		I feel like you can make some joke around rich text editors and this being slightly less than
+		that, maybe play off the wealth connotation of rich. Workshopping a few jokes below.
+	</p>
+	<p class="mt-3">
+		It's not a rich text editor. It's middle class. It's a text editor for your average joe.
+	</p>
+	<p class="mt-3 mb-5">A rich text editor? In this economy?</p>
+	<p class="mt-3">
+		Pseudo WYSIWYG is an editor library that sprinkles some rich text features on top of a plain
+		textarea, without becoming a full fledged full-text editor, hopefully gaining most of the
+		advantages without all of the costs.
+	</p>
+	<p class="mt-3">
+		I feel like you can make some joke around rich text editors and this being slightly less than
+		that, maybe play off the wealth connotation of rich. Workshopping a few jokes below.
+	</p>
+	<p class="mt-3">
+		It's not a rich text editor. It's middle class. It's a text editor for your average joe.
+	</p>
+	<p class="mt-3 mb-5">A rich text editor? In this economy?</p>
 </div>
