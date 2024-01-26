@@ -1,19 +1,13 @@
 <script>
 	import { Editor, splitText } from '$lib';
 	import MentionComponent from './MentionComponent.svelte';
-	let editorContents = `Hello world 
-
-This is some example editor content keyword1 that spans multiple lines. keyword1
-
-@hello @nick @test @recurse
-
-keyword1 
-
-This is some example editor content keyword1 that spans multiple lines. keyword2
-
-keyword2 
-
-As you can see, we're able to apply some cool styles to different blocks.`;
+	import ProjectComponent from './ProjectComponent.svelte';
+	let editorContents = `Good morning team! 
+	
+Here are the tasks for the week:
+- @nick will be working on the #svelte-refactor project
+- @alice and @bob will be working on the #e2e-encryption project
+`;
 	$: console.log({ editorContents });
 </script>
 
@@ -41,13 +35,20 @@ As you can see, we're able to apply some cool styles to different blocks.`;
 	<Editor
 		bind:content={editorContents}
 		keywordMap={{
-			keyword1: {},
-			keyword2: {},
-			'@\\w+': {
+			'@\\S+': {
 				component: MentionComponent,
 				includeFunction: (/** @type {string} */ str) => {
-					const recognizedNames = ['alice', 'bob', 'nick'];
+					const recognizedNames = ['alice-', 'bob', 'nick'];
 					const namesWithAt = recognizedNames.map((name) => `@${name}`);
+					if (namesWithAt.includes(str)) return true;
+					return false;
+				}
+			},
+			'#\\S+': {
+				component: ProjectComponent,
+				includeFunction: (/** @type {string} */ str) => {
+					const recognizedNames = ['svelte-refactor', 'e2e-encryption'];
+					const namesWithAt = recognizedNames.map((name) => `#${name}`);
 					if (namesWithAt.includes(str)) return true;
 					return false;
 				}
