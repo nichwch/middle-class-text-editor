@@ -30,11 +30,13 @@
 						`underblock-${paragraph_index},${clause_index}`
 					);
 					const clientRect = underblock?.getClientRects()?.[0];
+					console.log('CLIENT RECTS', clientRect);
+					console.log(underblock.offsetParent);
 					const editorRect = editorRef?.getBoundingClientRect();
 					console.log(clientRect);
 					keywordLocations[`${paragraph_index},${clause_index}`] = {
-						top: clientRect.y - editorRect.y || 0,
-						left: clientRect.x - editorRect.x || 0
+						top: underblock?.offsetTop || 0,
+						left: underblock.offsetLeft || 0
 					};
 				}
 			});
@@ -51,10 +53,12 @@
 				{#if paragraph.length === 0}
 					<br />
 				{:else}
-					<div class="relative block whitespace-pre-wrap">
+					<div class="block whitespace-pre-wrap">
 						{#each paragraph as clause, clause_index}
 							{#if isAKeyword(clause)}
-								<span id="underblock-{paragraph_index},{clause_index}">{clause}</span>
+								<div class="inline-block" id="underblock-{paragraph_index},{clause_index}">
+									{clause}
+								</div>
 							{:else}
 								<span>{clause}</span>
 							{/if}
@@ -68,13 +72,15 @@
 			class="w-full min-h-full p-3 leading-6 resize-none block text-red-900 absolute top-0 whitespace-pre-line break-after-right caret-black z-10 bg-transparent"
 			bind:innerText={content}
 		/>
-		<div class="leading-6">
+		<div
+			class="absolute h-[100px] top-0 w-full h-fullp-3 whitespace-pre-line break-after-right leading-6"
+		>
 			{#each formatted_paragraphs as paragraph, paragraph_index}
 				{#each paragraph as clause, clause_index}
 					{#if isAKeyword(clause)}
 						<span
 							id="inline-block overblock-{paragraph_index},{clause_index}"
-							class="z-20 leading-4 bg-red-200 hover:bg-red-300 outline outline-black"
+							class="z-20 leading-6 bg-red-200 hover:bg-red-300 outline outline-black"
 							style:position="absolute"
 							style:top="{keywordLocations[`${paragraph_index},${clause_index}`]?.top}px"
 							style:left="{keywordLocations[`${paragraph_index},${clause_index}`]?.left}px"
