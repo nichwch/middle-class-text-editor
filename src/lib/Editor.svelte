@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { text } from '@sveltejs/kit';
 	import { SvelteComponent, afterUpdate } from 'svelte';
 
 	export let splitFunc: (str: string) => string[];
@@ -39,6 +40,10 @@
 	let keywordLocations: { [key: string]: { top: number; left: number } } = {};
 	let editorScrollHeight = 0;
 	let textareaRef: Element | null = null;
+	let caretPosition = 0;
+	$: textBeforeCaret = content.substring(0, caretPosition);
+	$: console.log('textbeforecaret', textBeforeCaret);
+	console.log();
 	afterUpdate(() => {
 		keywordLocations = {};
 		formatted_paragraphs.forEach((paragraph, paragraph_index) => {
@@ -80,6 +85,14 @@
 				{/if}
 			{/each}
 		</div>
+		<!-- UNDERLAY FOR CURSOR POSITION  -->
+		<div class="leading-6 w-full h-full p-3 absolute top-0 whitespace-pre-line">
+			<span class="text-transparent">
+				{textBeforeCaret}
+			</span>
+
+			<span class="inline-block w-2 h-6 bg-green-500" id="caret" />
+		</div>
 		<!-- THE EDITOR -->
 		<textarea
 			style:height="{editorScrollHeight}px"
@@ -90,8 +103,14 @@
 				editorScrollHeight = textareaRef?.scrollHeight || 0;
 				//@ts-ignore
 				content = evt?.target?.value;
-				console.log('selection start', evt.target.selectionStart);
-				console.log('selection end', evt.target.selectionEnd);
+			}}
+			on:keydown={(evt) => {
+				//@ts-ignore
+				caretPosition = evt.target.selectionEnd;
+			}}
+			on:click={(evt) => {
+				//@ts-ignore
+				caretPosition = evt.target.selectionEnd;
 			}}
 		/>
 		<!-- THE OVERLAY -->
