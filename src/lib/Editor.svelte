@@ -10,6 +10,9 @@
 		};
 	} = {};
 
+	const makeDashesNonBreaking = (str: string) => str.replaceAll('-', '‑');
+	const makeDashesBreaking = (str: string) => str.replaceAll('‑', '-');
+
 	$: keywords = Object.keys(keywordMap) || [];
 	$: regex = new RegExp(`(${keywords.join('|')})`, 'g');
 
@@ -19,7 +22,7 @@
 			if (new RegExp(keyword).test(str)) {
 				const includeFunction = keywordMap[keyword].includeFunction;
 				if (includeFunction !== undefined) {
-					const included = includeFunction(str);
+					const included = includeFunction(makeDashesBreaking(str));
 					if (included) return keyword;
 					else return undefined;
 				} else {
@@ -58,7 +61,7 @@
 <div class="relative h-96 overflow-y-auto border border-black">
 	<div class="absolute h-full w-full top-0">
 		<!-- THE UNDERLAY -->
-		<div class="leading-6 w-full h-full p-3 absolute top-0 whitespace-pre-line break-after-right">
+		<div class="leading-6 w-full h-full p-3 absolute top-0 whitespace-pre-line">
 			{#each formatted_paragraphs as paragraph, paragraph_index}
 				{#if paragraph.length === 0}
 					<br />
@@ -81,14 +84,16 @@
 		<textarea
 			style:height="{editorScrollHeight}px"
 			class="w-full min-h-full p-3 leading-6 resize-none block absolute top-0 whitespace-pre-line break-after-right caret-black z-10 bg-transparent"
-			bind:value={content}
+			value={makeDashesNonBreaking(content)}
 			bind:this={textareaRef}
-			on:input={() => {
+			on:input={(evt) => {
 				editorScrollHeight = textareaRef?.scrollHeight || 0;
+				//@ts-ignore
+				content = evt?.target?.value;
 			}}
 		/>
 		<!-- THE OVERLAY -->
-		<div class="absolute top-0 w-full h-fullp-3 whitespace-pre-line break-after-right leading-6">
+		<div class="absolute top-0 w-full h-fullp-3 whitespace-pre-wrap leading-6">
 			{#each formatted_paragraphs as paragraph, paragraph_index}
 				{#each paragraph as clause, clause_index}
 					{@const match = getKeywordMatch(clause)}

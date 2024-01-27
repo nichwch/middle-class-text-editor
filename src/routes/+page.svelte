@@ -3,10 +3,14 @@
 	import MentionComponent from './MentionComponent.svelte';
 	import ProjectComponent from './ProjectComponent.svelte';
 	let editorContents = `Good morning team! 
-	
+
 Here are the tasks for the week:
 - @nick will be working on the #svelte-refactor project
 - @alice and @bob will be working on the #e2e-encryption project
+
+Let's see how it works as we approach the borders of the div. #svelte-refactor
+Let's see how it works as we approach the borders of the div. #project.project.project 
+Let's see how it works as we approach the borders of the div. #project/project/project
 `;
 </script>
 
@@ -46,7 +50,12 @@ Here are the tasks for the week:
 			'#\\S+': {
 				component: ProjectComponent,
 				includeFunction: (/** @type {string} */ str) => {
-					const recognizedNames = ['svelte-refactor', 'e2e-encryption'];
+					const recognizedNames = [
+						'svelte-refactor',
+						'e2e-encryption',
+						'project.project.project',
+						'project/project/project'
+					];
 					const namesWithAt = recognizedNames.map((name) => `#${name}`);
 					if (namesWithAt.includes(str)) return true;
 					return false;
