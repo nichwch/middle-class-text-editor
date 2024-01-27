@@ -58,7 +58,7 @@
 	});
 </script>
 
-<div class="relative h-96 overflow-y-auto border border-black">
+<div class="relative h-96 overflow-y-auto overscroll-none border border-black">
 	<div class="absolute h-full w-full top-0">
 		<!-- THE UNDERLAY -->
 		<div class="leading-6 w-full h-full p-3 absolute top-0 whitespace-pre-line">
