@@ -90,6 +90,8 @@
 				editorScrollHeight = textareaRef?.scrollHeight || 0;
 				//@ts-ignore
 				content = evt?.target?.value;
+				console.log('selection start', evt.target.selectionStart);
+				console.log('selection end', evt.target.selectionEnd);
 			}}
 		/>
 		<!-- THE OVERLAY -->
