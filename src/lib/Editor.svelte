@@ -42,8 +42,22 @@
 	let textareaRef: Element | null = null;
 	let caretPosition = 0;
 	$: textBeforeCaret = content.substring(0, caretPosition);
-	$: console.log('textbeforecaret', textBeforeCaret);
-	console.log();
+	let showingSlashMenu = false;
+	const processKeyDown = (evt: KeyboardEvent) => {
+		//@ts-ignore
+		caretPosition = evt.target.selectionEnd;
+		if (evt.key === '@') {
+			showingSlashMenu = true;
+		} else {
+			showingSlashMenu = false;
+		}
+	};
+
+	const processClick = (evt: MouseEvent) => {
+		//@ts-ignore
+		caretPosition = evt.target.selectionEnd;
+		showingSlashMenu = false;
+	};
 	afterUpdate(() => {
 		keywordLocations = {};
 		formatted_paragraphs.forEach((paragraph, paragraph_index) => {
@@ -87,11 +101,19 @@
 		</div>
 		<!-- UNDERLAY FOR CURSOR POSITION  -->
 		<div class="leading-6 w-full h-full p-3 absolute top-0 whitespace-pre-line">
-			<span class="text-transparent">
+			<!-- {#if showingSlashMenu}
+				<div class="inline-block relative top-10 z-30 w-72 h-24 border border-black bg-white"></div>
+			{/if} -->
+			<span class="relative text-transparent">
 				{textBeforeCaret}
 			</span>
+			<!-- SLASH MENU -->
 
-			<span class="inline-block w-2 h-6 bg-green-500" id="caret" />
+			<span class="inline-block w-2 h-6" id="caret">
+				{#if showingSlashMenu}
+					<div class="relative top-10 z-40 w-72 h-24 border border-black bg-white"></div>
+				{/if}
+			</span>
 		</div>
 		<!-- THE EDITOR -->
 		<textarea
@@ -104,14 +126,8 @@
 				//@ts-ignore
 				content = evt?.target?.value;
 			}}
-			on:keydown={(evt) => {
-				//@ts-ignore
-				caretPosition = evt.target.selectionEnd;
-			}}
-			on:click={(evt) => {
-				//@ts-ignore
-				caretPosition = evt.target.selectionEnd;
-			}}
+			on:keydown={processKeyDown}
+			on:click={processClick}
 		/>
 		<!-- THE OVERLAY -->
 		<div class="absolute top-0 w-full h-fullp-3 whitespace-pre-wrap leading-6">
