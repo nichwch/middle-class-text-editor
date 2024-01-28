@@ -57,27 +57,28 @@
 
 	$: console.log('slashMenuInput', slashMenuInput);
 	$: console.log('slashMenuOptions', shownMenuOptions);
+	$: console.log('menuPosition', menuPosition);
 
 	const processKeyDown = (evt: KeyboardEvent) => {
 		//@ts-ignore
 		caretPosition = evt.target.selectionEnd;
-		console.log('key', evt.key);
 		if (evt.key === '@' && !showingSlashMenu) {
 			showingSlashMenu = true;
 			slashMenuStartIndex = caretPosition;
 		} else if (showingSlashMenu && evt.key === 'ArrowUp') {
-			menuPosition = menuOptions.length % (menuPosition + 1);
+			menuPosition = Math.max(0, menuPosition - 1);
+
 			evt.preventDefault();
 			evt.stopPropagation();
 		} else if (showingSlashMenu && evt.key === 'ArrowDown') {
-			menuPosition = Math.max(0, menuPosition - 1);
+			menuPosition = Math.min(shownMenuOptions.length - 1, menuPosition + 1);
+
 			evt.preventDefault();
 			evt.stopPropagation();
 		} else if (showingSlashMenu && evt.key.length === 1) {
 			slashMenuInput = content.substring(slashMenuStartIndex + 1, caretPosition) + evt.key;
 		} else if (showingSlashMenu && evt.key === 'Backspace') {
 			if (slashMenuInput === null || slashMenuInput!.length === 0) {
-				console.log('d');
 				showingSlashMenu = false;
 				slashMenuInput = null;
 			} else {
@@ -153,8 +154,10 @@
 			<span class="inline-block w-2 h-6" id="caret">
 				{#if showingSlashMenu}
 					<div class="relative top-10 z-40 w-72 h-24 border border-black bg-white">
-						{#each shownMenuOptions as option}
-							<div class="px-2 hover:bg-red-100">{option}</div>
+						{#each shownMenuOptions as option, index}
+							<div class:bg-red-200={index === menuPosition} class="px-2 hover:bg-red-100">
+								{option}
+							</div>
 						{/each}
 					</div>
 				{/if}
