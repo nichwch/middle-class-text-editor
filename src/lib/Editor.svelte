@@ -42,14 +42,54 @@
 	let textareaRef: Element | null = null;
 	let caretPosition = 0;
 	$: textBeforeCaret = content.substring(0, caretPosition);
+
+	let menuOptions = ['nick', 'alice', 'bob'];
 	let showingSlashMenu = false;
+	let slashMenuStartIndex = 0;
+	let menuPosition = 0;
+	let slashMenuInput: string | null = null;
+	$: shownMenuOptions =
+		slashMenuInput === null
+			? menuOptions
+			: menuOptions.filter((option) => {
+					return option.includes(slashMenuInput!);
+				});
+
+	$: console.log('slashMenuInput', slashMenuInput);
+	$: console.log('slashMenuOptions', shownMenuOptions);
+
 	const processKeyDown = (evt: KeyboardEvent) => {
 		//@ts-ignore
 		caretPosition = evt.target.selectionEnd;
-		if (evt.key === '@') {
+		console.log('key', evt.key);
+		if (evt.key === '@' && !showingSlashMenu) {
 			showingSlashMenu = true;
+			slashMenuStartIndex = caretPosition;
+		} else if (evt.key === 'ArrowUp') {
+			menuPosition = menuOptions.length % (menuPosition + 1);
+			evt.preventDefault();
+			evt.stopPropagation();
+		} else if (evt.key === 'ArrowDown') {
+			menuPosition = Math.max(0, menuPosition - 1);
+			evt.preventDefault();
+			evt.stopPropagation();
+		} else if (showingSlashMenu && evt.key.length === 1) {
+			slashMenuInput = content.substring(slashMenuStartIndex + 1, caretPosition) + evt.key;
+		} else if (showingSlashMenu && evt.key === 'Backspace') {
+			if (slashMenuInput === null || slashMenuInput!.length === 0) {
+				showingSlashMenu = false;
+				slashMenuInput = null;
+				return;
+			}
+			slashMenuInput = content.substring(slashMenuStartIndex + 1, caretPosition);
+		} else if (evt.key === 'Escape') {
+			showingSlashMenu = false;
+			evt.preventDefault();
+			evt.stopPropagation();
+			evt.stopImmediatePropagation();
 		} else {
 			showingSlashMenu = false;
+			slashMenuInput = null;
 		}
 	};
 
@@ -111,7 +151,11 @@
 
 			<span class="inline-block w-2 h-6" id="caret">
 				{#if showingSlashMenu}
-					<div class="relative top-10 z-40 w-72 h-24 border border-black bg-white"></div>
+					<div class="relative top-10 z-40 w-72 h-24 border border-black bg-white">
+						{#each shownMenuOptions as option}
+							<div class="px-2 hover:bg-red-100">{option}</div>
+						{/each}
+					</div>
 				{/if}
 			</span>
 		</div>
