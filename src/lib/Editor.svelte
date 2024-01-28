@@ -89,6 +89,16 @@
 			evt.preventDefault();
 			evt.stopPropagation();
 			evt.stopImmediatePropagation();
+		} else if (evt.key === 'Enter') {
+			content =
+				content.substring(0, slashMenuStartIndex) +
+				// TODO: make this generalize!
+				// TODO: make caret position correct
+				'@' +
+				shownMenuOptions[menuPosition] +
+				content.substring(caretPosition, content.length - 1);
+			showingSlashMenu = false;
+			slashMenuInput = null;
 		} else {
 			showingSlashMenu = false;
 			slashMenuInput = null;
