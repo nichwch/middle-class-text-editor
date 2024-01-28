@@ -65,11 +65,11 @@
 		if (evt.key === '@' && !showingSlashMenu) {
 			showingSlashMenu = true;
 			slashMenuStartIndex = caretPosition;
-		} else if (evt.key === 'ArrowUp') {
+		} else if (showingSlashMenu && evt.key === 'ArrowUp') {
 			menuPosition = menuOptions.length % (menuPosition + 1);
 			evt.preventDefault();
 			evt.stopPropagation();
-		} else if (evt.key === 'ArrowDown') {
+		} else if (showingSlashMenu && evt.key === 'ArrowDown') {
 			menuPosition = Math.max(0, menuPosition - 1);
 			evt.preventDefault();
 			evt.stopPropagation();
@@ -77,11 +77,12 @@
 			slashMenuInput = content.substring(slashMenuStartIndex + 1, caretPosition) + evt.key;
 		} else if (showingSlashMenu && evt.key === 'Backspace') {
 			if (slashMenuInput === null || slashMenuInput!.length === 0) {
+				console.log('d');
 				showingSlashMenu = false;
 				slashMenuInput = null;
-				return;
+			} else {
+				slashMenuInput = content.substring(slashMenuStartIndex + 1, caretPosition - 1);
 			}
-			slashMenuInput = content.substring(slashMenuStartIndex + 1, caretPosition);
 		} else if (evt.key === 'Escape') {
 			showingSlashMenu = false;
 			evt.preventDefault();
