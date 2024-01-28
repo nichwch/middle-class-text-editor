@@ -59,6 +59,11 @@
 	$: console.log('slashMenuOptions', shownMenuOptions);
 	$: console.log('menuPosition', menuPosition);
 
+	const resetMenu = () => {
+		showingSlashMenu = false;
+		slashMenuInput = null;
+	};
+
 	const processKeyDown = (evt: KeyboardEvent) => {
 		//@ts-ignore
 		caretPosition = evt.target.selectionEnd;
@@ -79,8 +84,7 @@
 			slashMenuInput = content.substring(slashMenuStartIndex + 1, caretPosition) + evt.key;
 		} else if (showingSlashMenu && evt.key === 'Backspace') {
 			if (slashMenuInput === null || slashMenuInput!.length === 0) {
-				showingSlashMenu = false;
-				slashMenuInput = null;
+				resetMenu();
 			} else {
 				slashMenuInput = content.substring(slashMenuStartIndex + 1, caretPosition - 1);
 			}
@@ -97,11 +101,9 @@
 				'@' +
 				shownMenuOptions[menuPosition] +
 				content.substring(caretPosition, content.length - 1);
-			showingSlashMenu = false;
-			slashMenuInput = null;
+			resetMenu();
 		} else {
-			showingSlashMenu = false;
-			slashMenuInput = null;
+			resetMenu();
 		}
 	};
 
