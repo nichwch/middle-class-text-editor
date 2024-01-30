@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { text } from '@sveltejs/kit';
-	import { SvelteComponent, afterUpdate } from 'svelte';
+	import { SvelteComponent, afterUpdate, tick } from 'svelte';
 
 	export let splitFunc: (str: string) => string[];
 	export let content: string;
@@ -39,7 +39,7 @@
 	});
 	let keywordLocations: { [key: string]: { top: number; left: number } } = {};
 	let editorScrollHeight = 0;
-	let textareaRef: Element | null = null;
+	let textareaRef: HTMLTextAreaElement | null = null;
 	let caretPosition = 0;
 	$: textBeforeCaret = content.substring(0, caretPosition);
 
@@ -64,54 +64,80 @@
 		slashMenuInput = null;
 	};
 
+	const insertMenuOption = (str: string) => {
+		textareaRef?.focus();
+		textareaRef?.setSelectionRange(slashMenuStartIndex, textareaRef.selectionStart);
+		textareaRef?.setRangeText(str);
+		const newCaretPosition = slashMenuStartIndex + str.length;
+		textareaRef?.setSelectionRange(newCaretPosition, newCaretPosition);
+		content = textareaRef?.value!;
+	};
+
 	const processKeyDown = (evt: KeyboardEvent) => {
 		//@ts-ignore
 		caretPosition = evt.target.selectionEnd;
-		if (evt.key === '@' && !showingSlashMenu) {
+		// close the menu if the user types out the entire option
+		if (
+			showingSlashMenu &&
+			shownMenuOptions.length === 1 &&
+			slashMenuInput + evt.key === shownMenuOptions[0]
+		) {
+			resetMenu();
+		}
+		// open the menu if the user types an @ and the menu isn't open
+		else if (evt.key === '@' && !showingSlashMenu) {
 			showingSlashMenu = true;
 			slashMenuStartIndex = caretPosition;
-		} else if (showingSlashMenu && evt.key === 'ArrowUp') {
+		}
+		// move up an option
+		else if (showingSlashMenu && evt.key === 'ArrowUp') {
 			menuPosition = Math.max(0, menuPosition - 1);
-
 			evt.preventDefault();
 			evt.stopPropagation();
-		} else if (showingSlashMenu && evt.key === 'ArrowDown') {
+		}
+		// move down an option
+		else if (showingSlashMenu && evt.key === 'ArrowDown') {
 			menuPosition = Math.min(shownMenuOptions.length - 1, menuPosition + 1);
-
 			evt.preventDefault();
 			evt.stopPropagation();
-		} else if (showingSlashMenu && evt.key.length === 1) {
+		}
+		// if the user continues typing, modify slashMenuInput
+		// reset menuPosition because menu options will change to match new input
+		else if (showingSlashMenu && evt.key.length === 1) {
 			slashMenuInput = content.substring(slashMenuStartIndex + 1, caretPosition) + evt.key;
-		} else if (showingSlashMenu && evt.key === 'Backspace') {
+			menuPosition = 0;
+		}
+		// handle backspace
+		else if (showingSlashMenu && evt.key === 'Backspace') {
 			if (slashMenuInput === null || slashMenuInput!.length === 0) {
 				resetMenu();
 			} else {
 				slashMenuInput = content.substring(slashMenuStartIndex + 1, caretPosition - 1);
+				menuPosition = 0;
 			}
-		} else if (evt.key === 'Escape') {
+		}
+		// close menu when escape is handled
+		else if (evt.key === 'Escape') {
 			showingSlashMenu = false;
 			evt.preventDefault();
 			evt.stopPropagation();
 			evt.stopImmediatePropagation();
-		} else if (evt.key === 'Enter') {
-			content =
-				content.substring(0, slashMenuStartIndex) +
-				// TODO: make this generalize!
-				// TODO: make caret position correct
-				'@' +
-				shownMenuOptions[menuPosition] +
-				content.substring(caretPosition, content.length - 1);
+		}
+		// when the user presses enter, insert the selected option
+		else if (showingSlashMenu && evt.key === 'Enter') {
+			const insertedStr = '@' + shownMenuOptions[menuPosition] + ' ';
+			insertMenuOption(insertedStr);
+			evt.preventDefault();
+			evt.stopPropagation();
+			evt.stopImmediatePropagation();
 			resetMenu();
-		} else {
+		}
+		// any other input should reset the menu
+		else {
 			resetMenu();
 		}
 	};
 
-	const processClick = (evt: MouseEvent) => {
-		//@ts-ignore
-		caretPosition = evt.target.selectionEnd;
-		showingSlashMenu = false;
-	};
 	afterUpdate(() => {
 		keywordLocations = {};
 		formatted_paragraphs.forEach((paragraph, paragraph_index) => {
@@ -167,9 +193,16 @@
 				{#if showingSlashMenu}
 					<div class="relative top-10 z-40 w-72 h-24 border border-black bg-white">
 						{#each shownMenuOptions as option, index}
-							<div class:bg-red-200={index === menuPosition} class="px-2 hover:bg-red-100">
+							<button
+								class:bg-red-200={index === menuPosition}
+								class="block w-full text-left px-2 hover:bg-red-100"
+								on:click={() => {
+									insertMenuOption('@' + option + ' ');
+									resetMenu();
+								}}
+							>
 								{option}
-							</div>
+							</button>
 						{/each}
 					</div>
 				{/if}
@@ -187,7 +220,13 @@
 				content = evt?.target?.value;
 			}}
 			on:keydown={processKeyDown}
-			on:click={processClick}
+			on:click={() => {
+				showingSlashMenu = false;
+			}}
+			on:selectionchange={(evt) => {
+				//@ts-ignore
+				caretPosition = evt.target.selectionEnd;
+			}}
 		/>
 		<!-- THE OVERLAY -->
 		<div class="absolute top-0 w-full h-fullp-3 whitespace-pre-wrap leading-6">
