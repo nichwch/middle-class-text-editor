@@ -34,6 +34,7 @@ Let's see how it works as we approach the borders of the div. #project/project/p
 		It's not a rich text editor. It's middle class. It's a text editor for your average joe.
 	</p>
 	<p class="mt-3 mb-5">A rich text editor? In this economy?</p>
+	<p class="mt-3 mb-5">Editor? I hardly know her!</p>
 
 	<Editor
 		bind:content={editorContents}
