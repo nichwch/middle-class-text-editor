@@ -249,8 +249,8 @@
 			{#each formatted_paragraphs as paragraph, paragraph_index}
 				{#each paragraph as clause, clause_index}
 					{@const match = getKeywordMatch(clause)}
-
-					{#if match !== undefined}
+					{@const location = keywordLocations[`${paragraph_index},${clause_index}`]}
+					{#if match !== undefined && location !== undefined}
 						{@const component = keywordMap[match].component}
 						{#if component}
 							<span
@@ -267,8 +267,8 @@
 							<span
 								class="z-20 leading-6 bg-red-200 hover:bg-red-300 outline outline-black"
 								style:position="absolute"
-								style:top="{keywordLocations[`${paragraph_index},${clause_index}`]?.top}px"
-								style:left="{keywordLocations[`${paragraph_index},${clause_index}`]?.left}px"
+								style:top="{location?.top}px"
+								style:left="{location?.left}px"
 							>
 								{clause}
 							</span>
