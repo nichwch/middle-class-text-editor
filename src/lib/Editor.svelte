@@ -11,8 +11,11 @@
 		};
 	} = {};
 
-	const makeDashesNonBreaking = (str: string) => str.replaceAll('-', '‑');
-	const makeDashesBreaking = (str: string) => str.replaceAll('‑', '-');
+	const NON_BREAKING_DASH = '‑';
+	const makeDashesNonBreaking = (str: string) => str.replaceAll('-', NON_BREAKING_DASH);
+	const makeDashesBreaking = (str: string) => str.replaceAll(NON_BREAKING_DASH, '-');
+	// replace non breaking dashes in initial input
+	content = makeDashesNonBreaking(content);
 
 	$: keywords = Object.keys(keywordMap) || [];
 	$: regex = new RegExp(`(${keywords.join('|')})`, 'g');
@@ -39,7 +42,7 @@
 	});
 	let keywordLocations: { [key: string]: { top: number; left: number } } = {};
 	let editorScrollHeight = 0;
-	let textareaRef: HTMLTextAreaElement | null = null;
+	let textAreaRef: HTMLTextAreaElement | null = null;
 	let caretPosition = 0;
 	$: textBeforeCaret = content.substring(0, caretPosition);
 
@@ -65,12 +68,12 @@
 	};
 
 	const insertMenuOption = (str: string) => {
-		textareaRef?.focus();
-		textareaRef?.setSelectionRange(slashMenuStartIndex, textareaRef.selectionStart);
-		textareaRef?.setRangeText(str);
+		textAreaRef?.focus();
+		textAreaRef?.setSelectionRange(slashMenuStartIndex, textAreaRef.selectionStart);
+		textAreaRef?.setRangeText(str);
 		const newCaretPosition = slashMenuStartIndex + str.length;
-		textareaRef?.setSelectionRange(newCaretPosition, newCaretPosition);
-		content = textareaRef?.value!;
+		textAreaRef?.setSelectionRange(newCaretPosition, newCaretPosition);
+		content = textAreaRef?.value!;
 	};
 
 	const processKeyDown = (evt: KeyboardEvent) => {
@@ -212,10 +215,23 @@
 		<textarea
 			style:height="{editorScrollHeight}px"
 			class="w-full min-h-full p-3 leading-6 resize-none block absolute top-0 whitespace-pre-line break-after-right caret-black z-10 bg-transparent"
-			value={makeDashesNonBreaking(content)}
-			bind:this={textareaRef}
+			value={content}
+			bind:this={textAreaRef}
 			on:input={(evt) => {
-				editorScrollHeight = textareaRef?.scrollHeight || 0;
+				editorScrollHeight = textAreaRef?.scrollHeight || 0;
+				// replace dashes with non breaking dashes, so tag components don't get broken
+				//@ts-ignore
+				if (evt.data === '-') {
+					textAreaRef?.setSelectionRange(
+						textAreaRef?.selectionStart - 1,
+						textAreaRef.selectionStart
+					);
+					textAreaRef?.setRangeText(NON_BREAKING_DASH);
+					textAreaRef?.setSelectionRange(
+						textAreaRef.selectionStart + 1,
+						textAreaRef.selectionStart + 1
+					);
+				}
 				//@ts-ignore
 				content = evt?.target?.value;
 			}}
