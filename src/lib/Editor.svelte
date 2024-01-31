@@ -129,12 +129,16 @@
 		// move up an option
 		else if (showingSlashMenu && evt.key === 'ArrowUp') {
 			menuPosition = Math.max(0, menuPosition - 1);
+			const menuItem = document.getElementById(`slash-menu-${menuPosition}`);
+			menuItem?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 			evt.preventDefault();
 			evt.stopPropagation();
 		}
 		// move down an option
 		else if (showingSlashMenu && evt.key === 'ArrowDown') {
 			menuPosition = Math.min(shownMenuOptions.length - 1, menuPosition + 1);
+			const menuItem = document.getElementById(`slash-menu-${menuPosition}`);
+			menuItem?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 			evt.preventDefault();
 			evt.stopPropagation();
 		}
@@ -226,7 +230,7 @@
 				{textBeforeCaret}
 			</span>
 
-			<span class="inline-block w-1 h-6 bg-green-500" id="caret" bind:this={caretRef} />
+			<span class="inline-block w-1 h-6" id="caret" bind:this={caretRef} />
 			<!-- SLASH MENU -->
 			<div
 				style:position="absolute"
@@ -238,6 +242,7 @@
 			>
 				{#each shownMenuOptions as option, index}
 					<button
+						id="slash-menu-{index}"
 						class:bg-red-200={index === menuPosition}
 						class="block w-full text-left px-2 hover:bg-red-100"
 						on:click={() => {
