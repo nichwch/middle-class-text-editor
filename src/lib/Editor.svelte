@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { computePosition, offset, shift, arrow, flip } from '@floating-ui/dom';
 	import { text } from '@sveltejs/kit';
 	import { SvelteComponent, afterUpdate, tick } from 'svelte';
 
@@ -43,10 +44,43 @@
 	let keywordLocations: { [key: string]: { top: number; left: number } } = {};
 	let editorScrollHeight = 0;
 	let textAreaRef: HTMLTextAreaElement | null = null;
+	let caretRef: HTMLElement | null = null;
+	let slashMenuRef: HTMLElement | null = null;
 	let caretPosition = 0;
-	$: textBeforeCaret = content.substring(0, caretPosition);
+	let textBeforeCaret = '';
+	let slashMenuX = 0;
+	let slashMenuY = 0;
+	afterUpdate(() => {
+		computePosition(caretRef!, slashMenuRef!, {
+			placement: 'bottom',
+			middleware: [flip(), shift()]
+		}).then(({ x, y }) => {
+			console.log('xy', x, y);
+			slashMenuX = x;
+			slashMenuY = y;
+		});
+	});
 
-	let menuOptions = ['nick', 'alice', 'bob'];
+	let menuOptions = [
+		'nick',
+		'alice',
+		'bob',
+		'nick',
+		'alice',
+		'bob',
+		'nick',
+		'alice',
+		'bob',
+		'nick',
+		'alice',
+		'bob',
+		'nick',
+		'alice',
+		'bob',
+		'nick',
+		'alice',
+		'bob'
+	];
 	let showingSlashMenu = false;
 	let slashMenuStartIndex = 0;
 	let menuPosition = 0;
@@ -139,6 +173,7 @@
 		else {
 			resetMenu();
 		}
+		textBeforeCaret = content.substring(0, caretPosition);
 	};
 
 	afterUpdate(() => {
@@ -187,29 +222,33 @@
 			<!-- {#if showingSlashMenu}
 				<div class="inline-block relative top-10 z-30 w-72 h-24 border border-black bg-white"></div>
 			{/if} -->
-			<span class="relative text-transparent">
+			<span class="relative text-transparent inline">
 				{textBeforeCaret}
 			</span>
-			<!-- SLASH MENU -->
 
-			<span class="inline-block w-2 h-6" id="caret">
-				{#if showingSlashMenu}
-					<div class="relative top-10 z-40 w-72 h-24 border border-black bg-white">
-						{#each shownMenuOptions as option, index}
-							<button
-								class:bg-red-200={index === menuPosition}
-								class="block w-full text-left px-2 hover:bg-red-100"
-								on:click={() => {
-									insertMenuOption('@' + option + ' ');
-									resetMenu();
-								}}
-							>
-								{option}
-							</button>
-						{/each}
-					</div>
-				{/if}
-			</span>
+			<span class="inline-block w-1 h-6 bg-green-500" id="caret" bind:this={caretRef} />
+			<!-- SLASH MENU -->
+			<div
+				style:position="absolute"
+				class:hidden={!showingSlashMenu}
+				class="top-10 z-40 w-72 h-24 border border-black bg-white overflow-y-scroll"
+				style:top="{slashMenuY}px"
+				style:left="{slashMenuX}px"
+				bind:this={slashMenuRef}
+			>
+				{#each shownMenuOptions as option, index}
+					<button
+						class:bg-red-200={index === menuPosition}
+						class="block w-full text-left px-2 hover:bg-red-100"
+						on:click={() => {
+							insertMenuOption('@' + option + ' ');
+							resetMenu();
+						}}
+					>
+						{option}
+					</button>
+				{/each}
+			</div>
 		</div>
 		<!-- THE EDITOR -->
 		<textarea
@@ -241,7 +280,7 @@
 			}}
 			on:selectionchange={(evt) => {
 				//@ts-ignore
-				caretPosition = evt.target.selectionEnd;
+				caretPosition = evt.target.selectionStart;
 			}}
 		/>
 		<!-- THE OVERLAY -->
