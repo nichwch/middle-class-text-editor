@@ -110,6 +110,11 @@
 		content = textAreaRef?.value!;
 	};
 
+	const scrollToMenuItem = () => {
+		const menuItem = document.getElementById(`slash-menu-${menuPosition}`);
+		menuItem?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+	};
+
 	const processKeyDown = (evt: KeyboardEvent) => {
 		//@ts-ignore
 		caretPosition = evt.target.selectionEnd;
@@ -129,16 +134,14 @@
 		// move up an option
 		else if (showingSlashMenu && evt.key === 'ArrowUp') {
 			menuPosition = Math.max(0, menuPosition - 1);
-			const menuItem = document.getElementById(`slash-menu-${menuPosition}`);
-			menuItem?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+			scrollToMenuItem();
 			evt.preventDefault();
 			evt.stopPropagation();
 		}
 		// move down an option
 		else if (showingSlashMenu && evt.key === 'ArrowDown') {
 			menuPosition = Math.min(shownMenuOptions.length - 1, menuPosition + 1);
-			const menuItem = document.getElementById(`slash-menu-${menuPosition}`);
-			menuItem?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+			scrollToMenuItem();
 			evt.preventDefault();
 			evt.stopPropagation();
 		}
@@ -147,6 +150,7 @@
 		else if (showingSlashMenu && evt.key.length === 1) {
 			slashMenuInput = content.substring(slashMenuStartIndex + 1, caretPosition) + evt.key;
 			menuPosition = 0;
+			scrollToMenuItem();
 		}
 		// handle backspace
 		else if (showingSlashMenu && evt.key === 'Backspace') {
@@ -155,6 +159,7 @@
 			} else {
 				slashMenuInput = content.substring(slashMenuStartIndex + 1, caretPosition - 1);
 				menuPosition = 0;
+				scrollToMenuItem();
 			}
 		}
 		// close menu when escape is handled
