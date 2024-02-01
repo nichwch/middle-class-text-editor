@@ -156,6 +156,7 @@
 		}
 		// when the user presses enter, insert the selected option
 		else if (showingSlashMenu !== null && evt.key === 'Enter') {
+			console.log('triggered', showingSlashMenu, evt.key);
 			const insertedStr = showingSlashMenu + shownMenuOptions[menuPosition] + ' ';
 			insertMenuOption(insertedStr);
 			evt.preventDefault();
@@ -271,7 +272,7 @@
 			}}
 			on:keydown={processKeyDown}
 			on:click={() => {
-				showingSlashMenu = false;
+				showingSlashMenu = null;
 			}}
 			on:selectionchange={(evt) => {
 				//@ts-ignore
