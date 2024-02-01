@@ -205,9 +205,9 @@
 					<div class="block whitespace-pre-wrap">
 						{#each paragraph as clause, clause_index}
 							{#if getKeywordMatch(clause) !== undefined}
-								<div class="inline-block" id="underblock-{paragraph_index},{clause_index}">
+								<span id="underblock-{paragraph_index},{clause_index}">
 									{clause}
-								</div>
+								</span>
 							{:else}
 								<span>{clause}</span>
 							{/if}
