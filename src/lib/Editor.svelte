@@ -8,7 +8,9 @@
 	export let keywordMap: {
 		[key: string]: {
 			component?: SvelteComponent;
+			recognized: string[];
 			includeFunction?: (str: string) => boolean;
+			allowUnrecognized: boolean;
 		};
 	} = {};
 
@@ -19,17 +21,19 @@
 	content = makeDashesNonBreaking(content);
 
 	$: keywords = Object.keys(keywordMap) || [];
-	$: regex = new RegExp(`(${keywords.join('|')})`, 'g');
+	const getRule = (str: string) => `${str}\\S+`;
+	$: rules = keywords.map(getRule);
+	$: regex = new RegExp(`(${rules.join('|')})`, 'g');
 
 	const getKeywordMatch = (str: string): string | undefined => {
 		if (keywords.includes(str)) return str;
 		for (const keyword of keywords) {
-			if (new RegExp(keyword).test(str)) {
-				const includeFunction = keywordMap[keyword].includeFunction;
-				if (includeFunction !== undefined) {
-					const included = includeFunction(makeDashesBreaking(str));
-					if (included) return keyword;
-					else return undefined;
+			const rule = getRule(keyword);
+			const { recognized, allowUnrecognized } = keywordMap[keyword];
+			if (new RegExp(rule).test(str) && str.trim().length > 1) {
+				if (!allowUnrecognized) {
+					const namesWithKeyword = recognized.map((name) => `${keyword}${name}`);
+					if (namesWithKeyword.includes(makeDashesBreaking(str))) return keyword;
 				} else {
 					return keyword;
 				}
@@ -55,49 +59,29 @@
 			placement: 'bottom',
 			middleware: [flip(), shift()]
 		}).then(({ x, y }) => {
-			console.log('xy', x, y);
 			slashMenuX = x;
 			slashMenuY = y;
 		});
 	});
 
-	let menuOptions = [
-		'nick',
-		'alice',
-		'bob',
-		'nick',
-		'alice',
-		'bob',
-		'nick',
-		'alice',
-		'bob',
-		'nick',
-		'alice',
-		'bob',
-		'nick',
-		'alice',
-		'bob',
-		'nick',
-		'alice',
-		'bob'
-	];
-	let showingSlashMenu = false;
+	let menuOptions: string[] | null = null;
+	let showingSlashMenu: string | null = null;
 	let slashMenuStartIndex = 0;
 	let menuPosition = 0;
 	let slashMenuInput: string | null = null;
 	$: shownMenuOptions =
 		slashMenuInput === null
-			? menuOptions
-			: menuOptions.filter((option) => {
+			? menuOptions || []
+			: menuOptions?.filter((option) => {
 					return option.includes(slashMenuInput!);
-				});
+				}) || [];
 
 	$: console.log('slashMenuInput', slashMenuInput);
 	$: console.log('slashMenuOptions', shownMenuOptions);
 	$: console.log('menuPosition', menuPosition);
 
 	const resetMenu = () => {
-		showingSlashMenu = false;
+		showingSlashMenu = null;
 		slashMenuInput = null;
 	};
 
@@ -120,26 +104,27 @@
 		caretPosition = evt.target.selectionEnd;
 		// close the menu if the user types out the entire option
 		if (
-			showingSlashMenu &&
+			showingSlashMenu !== null &&
 			shownMenuOptions.length === 1 &&
 			slashMenuInput + evt.key === shownMenuOptions[0]
 		) {
 			resetMenu();
 		}
-		// open the menu if the user types an @ and the menu isn't open
-		else if (evt.key === '@' && !showingSlashMenu) {
-			showingSlashMenu = true;
+		// open the menu if the user types a keyword and the menu isn't open
+		else if (keywords.includes(evt.key) && showingSlashMenu === null) {
+			menuOptions = keywordMap[evt.key].recognized;
+			showingSlashMenu = evt.key;
 			slashMenuStartIndex = caretPosition;
 		}
 		// move up an option
-		else if (showingSlashMenu && evt.key === 'ArrowUp') {
+		else if (showingSlashMenu !== null && evt.key === 'ArrowUp') {
 			menuPosition = Math.max(0, menuPosition - 1);
 			scrollToMenuItem();
 			evt.preventDefault();
 			evt.stopPropagation();
 		}
 		// move down an option
-		else if (showingSlashMenu && evt.key === 'ArrowDown') {
+		else if (showingSlashMenu !== null && evt.key === 'ArrowDown') {
 			menuPosition = Math.min(shownMenuOptions.length - 1, menuPosition + 1);
 			scrollToMenuItem();
 			evt.preventDefault();
@@ -147,13 +132,13 @@
 		}
 		// if the user continues typing, modify slashMenuInput
 		// reset menuPosition because menu options will change to match new input
-		else if (showingSlashMenu && evt.key.length === 1) {
+		else if (showingSlashMenu !== null && evt.key.length === 1) {
 			slashMenuInput = content.substring(slashMenuStartIndex + 1, caretPosition) + evt.key;
 			menuPosition = 0;
 			scrollToMenuItem();
 		}
 		// handle backspace
-		else if (showingSlashMenu && evt.key === 'Backspace') {
+		else if (showingSlashMenu !== null && evt.key === 'Backspace') {
 			if (slashMenuInput === null || slashMenuInput!.length === 0) {
 				resetMenu();
 			} else {
@@ -164,14 +149,14 @@
 		}
 		// close menu when escape is handled
 		else if (evt.key === 'Escape') {
-			showingSlashMenu = false;
+			showingSlashMenu = null;
 			evt.preventDefault();
 			evt.stopPropagation();
 			evt.stopImmediatePropagation();
 		}
 		// when the user presses enter, insert the selected option
-		else if (showingSlashMenu && evt.key === 'Enter') {
-			const insertedStr = '@' + shownMenuOptions[menuPosition] + ' ';
+		else if (showingSlashMenu !== null && evt.key === 'Enter') {
+			const insertedStr = showingSlashMenu + shownMenuOptions[menuPosition] + ' ';
 			insertMenuOption(insertedStr);
 			evt.preventDefault();
 			evt.stopPropagation();

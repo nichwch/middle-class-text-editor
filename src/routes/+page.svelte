@@ -39,8 +39,10 @@ Let's see how it works as we approach the borders of the div. #project/project/p
 	<Editor
 		bind:content={editorContents}
 		keywordMap={{
-			'@\\S+': {
+			'@': {
 				component: MentionComponent,
+				recognized: ['alice', 'bob', 'nick'],
+				allowUnrecognized: false,
 				includeFunction: (/** @type {string} */ str) => {
 					const recognizedNames = ['alice', 'bob', 'nick'];
 					const namesWithAt = recognizedNames.map((name) => `@${name}`);
@@ -48,8 +50,15 @@ Let's see how it works as we approach the borders of the div. #project/project/p
 					return false;
 				}
 			},
-			'#\\S+': {
+			'#': {
 				component: ProjectComponent,
+				recognized: [
+					'svelte-refactor',
+					'e2e-encryption',
+					'project.project.project',
+					'project/project/project'
+				],
+				allowUnrecognized: false,
 				includeFunction: (/** @type {string} */ str) => {
 					const recognizedNames = [
 						'svelte-refactor',
