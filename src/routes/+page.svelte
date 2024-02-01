@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { Editor, splitText } from '$lib';
 	import MentionComponent from './MentionComponent.svelte';
 	import ProjectComponent from './ProjectComponent.svelte';
@@ -12,6 +12,24 @@ Let's see how it works as we approach the borders of the div. #svelte-refactor
 Let's see how it works as we approach the borders of the div. #project.project.project 
 Let's see how it works as we approach the borders of the div. #project/project/project
 `;
+
+	let nameInput = `alice
+bob
+nick
+`;
+	let projectInput = `svelte-refactor
+e2e-encryption
+project.project.project
+project/project/project
+`;
+
+	const getListFromString = (str: string): string[] =>
+		str
+			.split('\n')
+			.map((str) => str.trim())
+			.filter((str) => str.length > 0);
+	$: names = getListFromString(nameInput);
+	$: projects = getListFromString(projectInput);
 </script>
 
 <div class="w-full px-5 mt-10 md:mx-auto md:w-[36rem]">
@@ -36,82 +54,77 @@ Let's see how it works as we approach the borders of the div. #project/project/p
 	<p class="mt-3 mb-5">A rich text editor? In this economy?</p>
 	<p class="mt-3 mb-5">Editor? I hardly know her!</p>
 
+	<p>Try changing the names recognized by @: (separate values by newline)</p>
+	<textarea class=" resize-none border border-black h-32" bind:value={nameInput} />
+
+	<p>Try changing the projects recognized by # (separate values by newline):</p>
+	<textarea class=" resize-none border border-black h-32" bind:value={projectInput} />
+
 	<Editor
 		bind:content={editorContents}
 		keywordMap={{
 			'@': {
 				component: MentionComponent,
-				recognized: ['alice', 'bob', 'nick'],
-				allowUnrecognized: false,
-				includeFunction: (/** @type {string} */ str) => {
-					const recognizedNames = ['alice', 'bob', 'nick'];
-					const namesWithAt = recognizedNames.map((name) => `@${name}`);
-					if (namesWithAt.includes(str)) return true;
-					return false;
-				}
+				recognized: names,
+				allowUnrecognized: false
 			},
 			'#': {
 				component: ProjectComponent,
-				recognized: [
-					'svelte-refactor',
-					'e2e-encryption',
-					'project.project.project',
-					'project/project/project'
-				],
-				allowUnrecognized: false,
-				includeFunction: (/** @type {string} */ str) => {
-					const recognizedNames = [
-						'svelte-refactor',
-						'e2e-encryption',
-						'project.project.project',
-						'project/project/project'
-					];
-					const namesWithAt = recognizedNames.map((name) => `#${name}`);
-					if (namesWithAt.includes(str)) return true;
-					return false;
-				}
+				recognized: projects,
+				allowUnrecognized: false
+			},
+			'\\*': {
+				component: ProjectComponent,
+				recognized: [],
+				allowUnrecognized: true
 			}
 		}}
 		splitFunc={(/** @type {string} */ text) => text.split('\n')}
 	/>
 
 	<p class="mt-3">
-		Pseudo WYSIWYG is an editor library that sprinkles some rich text features on top of a plain
-		textarea, without becoming a full fledged full-text editor, hopefully gaining most of the
-		advantages without all of the costs.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
 	</p>
 	<p class="mt-3">
-		I feel like you can make some joke around rich text editors and this being slightly less than
-		that, maybe play off the wealth connotation of rich. Workshopping a few jokes below.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
 	</p>
 	<p class="mt-3">
-		It's not a rich text editor. It's middle class. It's a text editor for your average joe.
-	</p>
-	<p class="mt-3 mb-5">A rich text editor? In this economy?</p>
-	<p class="mt-3">
-		Pseudo WYSIWYG is an editor library that sprinkles some rich text features on top of a plain
-		textarea, without becoming a full fledged full-text editor, hopefully gaining most of the
-		advantages without all of the costs.
-	</p>
-	<p class="mt-3">
-		I feel like you can make some joke around rich text editors and this being slightly less than
-		that, maybe play off the wealth connotation of rich. Workshopping a few jokes below.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
 	</p>
 	<p class="mt-3">
-		It's not a rich text editor. It's middle class. It's a text editor for your average joe.
-	</p>
-	<p class="mt-3 mb-5">A rich text editor? In this economy?</p>
-	<p class="mt-3">
-		Pseudo WYSIWYG is an editor library that sprinkles some rich text features on top of a plain
-		textarea, without becoming a full fledged full-text editor, hopefully gaining most of the
-		advantages without all of the costs.
-	</p>
-	<p class="mt-3">
-		I feel like you can make some joke around rich text editors and this being slightly less than
-		that, maybe play off the wealth connotation of rich. Workshopping a few jokes below.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
 	</p>
 	<p class="mt-3">
-		It's not a rich text editor. It's middle class. It's a text editor for your average joe.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
 	</p>
-	<p class="mt-3 mb-5">A rich text editor? In this economy?</p>
 </div>
