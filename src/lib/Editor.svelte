@@ -155,7 +155,11 @@
 			evt.stopImmediatePropagation();
 		}
 		// when the user presses enter, insert the selected option
-		else if (showingSlashMenu !== null && evt.key === 'Enter') {
+		else if (
+			showingSlashMenu !== null &&
+			evt.key === 'Enter' &&
+			shownMenuOptions[menuPosition] !== undefined
+		) {
 			console.log('triggered', showingSlashMenu, evt.key);
 			const insertedStr = showingSlashMenu + shownMenuOptions[menuPosition] + ' ';
 			insertMenuOption(insertedStr);
