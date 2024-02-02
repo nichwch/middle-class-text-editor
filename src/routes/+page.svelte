@@ -55,10 +55,10 @@ project/project/project
 	<p class="mt-3 mb-5">Editor? I hardly know her!</p>
 
 	<p>Try changing the names recognized by @: (separate values by newline)</p>
-	<textarea class=" resize-none border border-black h-32" bind:value={nameInput} />
+	<textarea class=" resize-none border border-black h-32 p-2" bind:value={nameInput} />
 
 	<p>Try changing the projects recognized by # (separate values by newline):</p>
-	<textarea class=" resize-none border border-black h-32" bind:value={projectInput} />
+	<textarea class=" resize-none border border-black h-32 p-2" bind:value={projectInput} />
 
 	<Editor
 		bind:content={editorContents}

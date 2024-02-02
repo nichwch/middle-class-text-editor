@@ -45,6 +45,18 @@
 	$: formatted_paragraphs = splitFunc(content).map((para) => {
 		return para.split(regex);
 	});
+	$: splitKeywords = content.split(regex);
+	$: keywordIndices = splitKeywords.reduce((acc, cur) => {
+		const lastSegment = acc.length > 0 ? acc[acc.length - 1] : 0;
+		console.log('segment', lastSegment, acc, cur);
+		const nextIndex = lastSegment + cur.length;
+		acc.push(nextIndex);
+		return acc;
+	}, [] as number[]);
+
+	$: console.log(keywordIndices);
+	$: console.log('caretPosition', caretPosition);
+
 	let keywordLocations: { [key: string]: { top: number; left: number } } = {};
 	let editorScrollHeight = 0;
 	let textAreaRef: HTMLTextAreaElement | null = null;
@@ -75,10 +87,6 @@
 			: menuOptions?.filter((option) => {
 					return option.includes(slashMenuInput!);
 				}) || [];
-
-	$: console.log('slashMenuInput', slashMenuInput);
-	$: console.log('slashMenuOptions', shownMenuOptions);
-	$: console.log('menuPosition', menuPosition);
 
 	const resetMenu = () => {
 		showingSlashMenu = null;
@@ -170,6 +178,41 @@
 		}
 		// any other input should reset the menu
 		else {
+			/*
+ 	the regex split is gauranteed to alternate between keywords and non keywords
+	
+	this is important, because moving left at the end of a keyword and moving right at the start of 
+	a keyword should move the user through the keyword, but NOT if they move RIGHT and the END or 
+	LEFT at the START.
+	*/
+			// moving through keyword if to the left
+
+			if (evt.key === 'ArrowLeft') {
+				const nextPos = caretPosition;
+				const indexOfKeyword = keywordIndices.indexOf(nextPos);
+				// if first split is keyword, we are looking for
+				// looking for ODD keywords indices for ENDS of keywords
+				if (indexOfKeyword >= 0 && indexOfKeyword % 2 === 1) {
+					const targetIndex = keywordIndices[indexOfKeyword - 1];
+					if (targetIndex !== undefined) {
+						textAreaRef?.focus();
+						textAreaRef?.setSelectionRange(targetIndex, targetIndex);
+					}
+				}
+			}
+			// moving through keyword if to the right
+			if (evt.key === 'ArrowRight') {
+				const nextPos = caretPosition;
+				const indexOfKeyword = keywordIndices.indexOf(nextPos);
+				// looking for EVEN keywords indices for STARTS of keywords
+				if (indexOfKeyword >= 0 && indexOfKeyword % 2 === 0) {
+					const targetIndex = keywordIndices[indexOfKeyword + 1];
+					if (targetIndex !== undefined) {
+						textAreaRef?.focus();
+						textAreaRef?.setSelectionRange(targetIndex, targetIndex);
+					}
+				}
+			}
 			resetMenu();
 		}
 		textBeforeCaret = content.substring(0, caretPosition);
