@@ -107,6 +107,26 @@
 		menuItem?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 	};
 
+	// returns the right boundary if caret position is on left boundary
+	const isOnEndBoundary = (caretPos: number): number | undefined => {
+		const indexOfKeyword = keywordIndices.indexOf(caretPos);
+		// looking for EVEN keywords indices for ENDS of keywords
+		if (indexOfKeyword >= 0 && indexOfKeyword % 2 === 1) {
+			const targetIndex = keywordIndices[indexOfKeyword - 1];
+			return targetIndex;
+		}
+		return undefined;
+	};
+	const isOnStartBoundary = (caretPos: number): number | undefined => {
+		const indexOfKeyword = keywordIndices.indexOf(caretPos);
+		// looking for EVEN keywords indices for STARTS of keywords
+		if (indexOfKeyword >= 0 && indexOfKeyword % 2 === 0) {
+			const targetIndex = keywordIndices[indexOfKeyword + 1];
+			return targetIndex;
+		}
+		return undefined;
+	};
+
 	const processKeyDown = (evt: KeyboardEvent) => {
 		//@ts-ignore
 		caretPosition = evt.target.selectionEnd;
@@ -188,29 +208,22 @@
 			// moving through keyword if to the left
 
 			if (evt.key === 'ArrowLeft') {
-				const nextPos = caretPosition;
-				const indexOfKeyword = keywordIndices.indexOf(nextPos);
+				const targetIndex = isOnEndBoundary(caretPosition);
 				// if first split is keyword, we are looking for
 				// looking for ODD keywords indices for ENDS of keywords
-				if (indexOfKeyword >= 0 && indexOfKeyword % 2 === 1) {
-					const targetIndex = keywordIndices[indexOfKeyword - 1];
-					if (targetIndex !== undefined) {
-						textAreaRef?.focus();
-						textAreaRef?.setSelectionRange(targetIndex, targetIndex);
-					}
+				if (targetIndex !== undefined) {
+					textAreaRef?.focus();
+					textAreaRef?.setSelectionRange(targetIndex, targetIndex);
 				}
 			}
 			// moving through keyword if to the right
 			if (evt.key === 'ArrowRight') {
-				const nextPos = caretPosition;
-				const indexOfKeyword = keywordIndices.indexOf(nextPos);
-				// looking for EVEN keywords indices for STARTS of keywords
-				if (indexOfKeyword >= 0 && indexOfKeyword % 2 === 0) {
-					const targetIndex = keywordIndices[indexOfKeyword + 1];
-					if (targetIndex !== undefined) {
-						textAreaRef?.focus();
-						textAreaRef?.setSelectionRange(targetIndex, targetIndex);
-					}
+				const targetIndex = isOnStartBoundary(caretPosition);
+				// if first split is keyword, we are looking for
+				// looking for ODD keywords indices for ENDS of keywords
+				if (targetIndex !== undefined) {
+					textAreaRef?.focus();
+					textAreaRef?.setSelectionRange(targetIndex, targetIndex);
 				}
 			}
 			resetMenu();
