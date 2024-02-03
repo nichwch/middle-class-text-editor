@@ -48,14 +48,10 @@
 	$: splitKeywords = content.split(regex);
 	$: keywordIndices = splitKeywords.reduce((acc, cur) => {
 		const lastSegment = acc.length > 0 ? acc[acc.length - 1] : 0;
-		console.log('segment', lastSegment, acc, cur);
 		const nextIndex = lastSegment + cur.length;
 		acc.push(nextIndex);
 		return acc;
 	}, [] as number[]);
-
-	$: console.log(keywordIndices);
-	$: console.log('caretPosition', caretPosition);
 
 	let keywordLocations: { [key: string]: { top: number; left: number } } = {};
 	let editorScrollHeight = 0;
@@ -223,6 +219,18 @@
 				// looking for ODD keywords indices for ENDS of keywords
 				if (targetIndex !== undefined) {
 					textAreaRef?.focus();
+					textAreaRef?.setSelectionRange(targetIndex, targetIndex);
+				}
+			}
+			if (evt.key === 'Backspace') {
+				// check if on end boundary to delete keyword afterwards
+				// the second condition is if the user deletes a space before hand
+				const targetIndex = isOnEndBoundary(caretPosition) || isOnEndBoundary(caretPosition - 1);
+				console.log('target index', targetIndex);
+				if (targetIndex !== undefined) {
+					textAreaRef?.focus();
+					textAreaRef?.setSelectionRange(targetIndex, caretPosition, 'backward');
+					textAreaRef?.setRangeText('');
 					textAreaRef?.setSelectionRange(targetIndex, targetIndex);
 				}
 			}
