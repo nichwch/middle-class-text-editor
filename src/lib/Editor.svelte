@@ -305,7 +305,7 @@
 						class:bg-red-200={index === menuPosition}
 						class="block w-full text-left px-2 hover:bg-red-100"
 						on:click={() => {
-							insertMenuOption('@' + option + ' ');
+							insertMenuOption(showingSlashMenu + option + ' ');
 							resetMenu();
 						}}
 					>
