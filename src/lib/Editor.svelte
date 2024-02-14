@@ -3,7 +3,7 @@
 	import { text } from '@sveltejs/kit';
 	import { SvelteComponent, afterUpdate, tick } from 'svelte';
 
-	export let splitFunc: (str: string) => string[];
+	export let splitFunc: (str: string) => string[] = (text) => text.split('\n');
 	export let content: string;
 	export let keywordMap: {
 		[key: string]: {
@@ -184,7 +184,6 @@
 			evt.key === 'Enter' &&
 			shownMenuOptions[menuPosition] !== undefined
 		) {
-			console.log('triggered', showingSlashMenu, evt.key);
 			const insertedStr = showingSlashMenu + shownMenuOptions[menuPosition] + ' ';
 			insertMenuOption(insertedStr);
 			evt.preventDefault();
@@ -211,6 +210,7 @@
 					textAreaRef?.focus();
 					textAreaRef?.setSelectionRange(targetIndex, targetIndex);
 				}
+				resetMenu();
 			}
 			// moving through keyword if to the right
 			if (evt.key === 'ArrowRight') {
@@ -221,6 +221,7 @@
 					textAreaRef?.focus();
 					textAreaRef?.setSelectionRange(targetIndex, targetIndex);
 				}
+				resetMenu();
 			}
 			if (evt.key === 'Backspace') {
 				// check if on end boundary to delete keyword afterwards
@@ -233,8 +234,8 @@
 					textAreaRef?.setRangeText('');
 					textAreaRef?.setSelectionRange(targetIndex, targetIndex);
 				}
+				resetMenu();
 			}
-			resetMenu();
 		}
 		textBeforeCaret = content.substring(0, caretPosition);
 	};
@@ -317,7 +318,7 @@
 		<!-- THE EDITOR -->
 		<textarea
 			style:height="{editorScrollHeight}px"
-			class="w-full min-h-full p-3 leading-6 resize-none block absolute top-0 whitespace-pre-line break-after-right caret-black z-10 bg-transparent"
+			class="w-full min-h-full p-3 leading-6 resize-none block absolute top-0 caret-black z-10 bg-transparent"
 			value={content}
 			bind:this={textAreaRef}
 			on:input={(evt) => {
