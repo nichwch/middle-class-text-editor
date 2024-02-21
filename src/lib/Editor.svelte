@@ -52,6 +52,7 @@
 		acc.push(nextIndex);
 		return acc;
 	}, [] as number[]);
+	$: console.log('keywordindices', keywordIndices);
 
 	let keywordLocations: { [key: string]: { top: number; left: number } } = {};
 	let editorScrollHeight = 0;
@@ -102,6 +103,20 @@
 		const menuItem = document.getElementById(`slash-menu-${menuPosition}`);
 		menuItem?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 	};
+
+	// returns true if keyword is under caret position
+	// TODO: make it so that it returns the keyword and its location
+
+	const isOnKeyword = (caretPos: number): number | undefined => {
+		for (let i = 0; i < keywordIndices.length - 1; i++) {
+			let currInd = keywordIndices[i];
+			if (caretPos >= currInd && caretPos < keywordIndices[i + 1]) {
+				if (i % 2 === 1) return i;
+			}
+		}
+	};
+
+	$: console.log('index, ', isOnKeyword(caretPosition));
 
 	// returns the right boundary if caret position is on left boundary
 	const isOnEndBoundary = (caretPos: number): number | undefined => {
