@@ -111,12 +111,15 @@
 		for (let i = 0; i < keywordIndices.length - 1; i++) {
 			let currInd = keywordIndices[i];
 			if (caretPos >= currInd && caretPos < keywordIndices[i + 1]) {
-				if (i % 2 === 1) return i;
+				if (i % 2 === 0) return i / 2;
 			}
 		}
 	};
 
-	$: console.log('index, ', isOnKeyword(caretPosition));
+	afterUpdate(() => {
+		console.log('!!!', document?.activeElement?.selectionEnd);
+		console.log('IND', isOnKeyword(document?.activeElement?.selectionEnd));
+	});
 
 	// returns the right boundary if caret position is on left boundary
 	const isOnEndBoundary = (caretPos: number): number | undefined => {
@@ -337,6 +340,8 @@
 			value={content}
 			bind:this={textAreaRef}
 			on:input={(evt) => {
+				console.log('!!!', document?.activeElement?.selectionEnd, caretPosition);
+				console.log('IND', isOnKeyword(document?.activeElement?.selectionEnd));
 				editorScrollHeight = textAreaRef?.scrollHeight || 0;
 				// replace dashes with non breaking dashes, so tag components don't get broken
 				//@ts-ignore
