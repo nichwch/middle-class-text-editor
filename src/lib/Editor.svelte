@@ -130,15 +130,6 @@
 		}
 		return undefined;
 	};
-	const isOnStartBoundary = (caretPos: number): number | undefined => {
-		const indexOfKeyword = keywordIndices.indexOf(caretPos);
-		// looking for EVEN keywords indices for STARTS of keywords
-		if (indexOfKeyword >= 0 && indexOfKeyword % 2 === 0) {
-			const targetIndex = keywordIndices[indexOfKeyword + 1];
-			return targetIndex;
-		}
-		return undefined;
-	};
 
 	const processKeyUp = (evt: KeyboardEvent) => {
 		//@ts-ignore
@@ -225,7 +216,9 @@
 			// moving through keyword if to the left
 
 			if (evt.key === 'ArrowLeft') {
-				const targetIndex = isOnEndBoundary(caretPosition);
+				const keywordIndex = isOnKeyword(caretPosition);
+				const targetIndex =
+					keywordIndex !== undefined ? keywordIndices[keywordIndex * 2] : undefined;
 				// if first split is keyword, we are looking for
 				// looking for ODD keywords indices for ENDS of keywords
 				if (targetIndex !== undefined) {
@@ -236,7 +229,9 @@
 			}
 			// moving through keyword if to the right
 			if (evt.key === 'ArrowRight') {
-				const targetIndex = isOnStartBoundary(caretPosition);
+				const keywordIndex = isOnKeyword(caretPosition);
+				const targetIndex =
+					keywordIndex !== undefined ? keywordIndices[keywordIndex * 2 + 1] : undefined;
 				// if first split is keyword, we are looking for
 				// looking for ODD keywords indices for ENDS of keywords
 				if (targetIndex !== undefined) {

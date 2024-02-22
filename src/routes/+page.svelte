@@ -86,7 +86,7 @@ project/project/project
 	<h1 class="text-2xl mt-3">Some things that don't quite work:</h1>
 	<p class="mt-3">You can still get the styling to break by</p>
 	<p class="mt-3"></p>
-	<h1 class="text-2xl mt-3">Use MIDDLE CLASS TEXT EDITOR</h1>
+	<h1 class="text-2xl mt-3">Use MIDDLE CLASS TEXT EDITOR in your project:</h1>
 	<p class="mt-3">
 		It's small enough that you can just copy paste the component into your project, <a
 			href="https://ui.shadcn.com/">ShadCN style</a
