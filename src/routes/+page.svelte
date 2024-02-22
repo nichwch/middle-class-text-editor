@@ -8,9 +8,9 @@ Here are the tasks for the week:
 - @nick will be working on the #svelte-refactor project
 - @alice and @bob will be working on the #e2e-encryption project
 
-Let's see how it works as we approach the borders of the div. #svelte-refactor
+Let's see how it works as we approach the borders of the div. #svelte-refactor 
 Let's see how it works as we approach the borders of the div. #project.project.project 
-Let's see how it works as we approach the borders of the div. #project/project/project
+Let's see how it works as we approach the borders of the div. #project/project/project 
 `;
 
 	let nameInput = `alice
