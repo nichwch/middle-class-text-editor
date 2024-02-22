@@ -54,6 +54,7 @@
 	$: console.log('keywordindices', keywordIndices);
 
 	let keywordLocations: { [key: string]: { top: number; left: number } } = {};
+	let keywordLocationToIndex: { [key: string]: number } = {};
 	let editorScrollHeight = 0;
 	let textAreaRef: HTMLTextAreaElement | null = null;
 	let caretRef: HTMLElement | null = null;
@@ -118,17 +119,6 @@
 
 	$: indexOfCursoredKeyword = isOnKeyword(caretPosition);
 	$: console.log({ indexOfCursoredKeyword });
-
-	// afterUpdate(() => {
-	// 	tick().then(() => {
-	// 		console.log(
-	// 			'!!!2',
-	// 			document?.activeElement?.selectionStart,
-	// 			document?.activeElement?.selectionEnd
-	// 		);
-	// 		console.log('IND2', isOnKeyword(document?.activeElement?.selectionEnd));
-	// 	});
-	// });
 
 	// returns the right boundary if caret position is on left boundary
 	const isOnEndBoundary = (caretPos: number): number | undefined => {
@@ -274,16 +264,19 @@
 
 	afterUpdate(() => {
 		keywordLocations = {};
+		keywordLocationToIndex = {};
+		let counter = 0;
 		formatted_paragraphs.forEach((paragraph, paragraph_index) => {
 			paragraph.forEach((clause, clause_index) => {
 				if (getKeywordMatch(clause)) {
-					const underblock = document.getElementById(
-						`underblock-${paragraph_index},${clause_index}`
-					);
-					keywordLocations[`${paragraph_index},${clause_index}`] = {
+					const keyword_key = `${paragraph_index},${clause_index}`;
+					const underblock = document.getElementById(`underblock-${keyword_key}`);
+					keywordLocations[keyword_key] = {
 						top: underblock?.offsetTop || 0,
 						left: underblock?.offsetLeft || 0
 					};
+					keywordLocationToIndex[keyword_key] = counter;
+					counter++;
 				}
 			});
 		});
@@ -382,17 +375,22 @@
 			{#each formatted_paragraphs as paragraph, paragraph_index}
 				{#each paragraph as clause, clause_index}
 					{@const match = getKeywordMatch(clause)}
-					{@const location = keywordLocations[`${paragraph_index},${clause_index}`]}
+					{@const keyword_key = `${paragraph_index},${clause_index}`}
+					{@const location = keywordLocations[keyword_key]}
 					{#if match !== undefined && location !== undefined}
 						{@const component = keywordMap[match].component}
 						{#if component}
 							<span
 								class="z-20 leading-6"
 								style:position="absolute"
-								style:top="{keywordLocations[`${paragraph_index},${clause_index}`]?.top}px"
-								style:left="{keywordLocations[`${paragraph_index},${clause_index}`]?.left}px"
+								style:top="{keywordLocations[keyword_key]?.top}px"
+								style:left="{keywordLocations[keyword_key]?.left}px"
 							>
-								<svelte:component this={component}>
+								<svelte:component
+									this={component}
+									focusedIndex={indexOfCursoredKeyword}
+									index={keywordLocationToIndex[keyword_key]}
+								>
 									{clause}
 								</svelte:component>
 							</span>
