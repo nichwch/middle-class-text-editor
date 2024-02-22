@@ -100,13 +100,16 @@ project/project/project
 	<h1 class="text-2xl mt-3">Use MIDDLE CLASS TEXT EDITOR in your project:</h1>
 	<p class="mt-3">
 		It's small enough that you can just copy paste the component into your project, <a
+			class="link"
 			href="https://ui.shadcn.com/">ShadCN style</a
 		>. The only external dependency is
-		<a href="https://www.npmjs.com/package/@floating-ui/dom">@floating-ui/dom</a>, used for the
-		autocomplete popup window.
+		<a class="link" href="https://www.npmjs.com/package/@floating-ui/dom">@floating-ui/dom</a>, used
+		for the autocomplete popup window.
 	</p>
 	<p class="mt-3">
-		<a href="https://github.com/nichwch/middle-class-text-editor/blob/main/src/lib/Editor.svelte"
+		<a
+			class="link"
+			href="https://github.com/nichwch/middle-class-text-editor/blob/main/src/lib/Editor.svelte"
 			>You can find the source for the component here, in the repo.</a
 		>
 	</p>
@@ -134,6 +137,7 @@ project/project/project
 	/>
 	<p class="mt-3">
 		If you got this far and liked my project, <a
+			class="link"
 			href="https://github.com/nichwch/middle-class-text-editor"
 			>consider giving it a star on Github.</a
 		>
