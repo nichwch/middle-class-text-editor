@@ -109,6 +109,7 @@
 	const isOnKeyword = (caretPos: number): number | undefined => {
 		for (let i = 0; i < keywordIndices.length - 1; i++) {
 			let currInd = keywordIndices[i];
+			if (caretPos === currInd) return Math.floor(i / 2);
 			if (caretPos >= currInd && caretPos < keywordIndices[i + 1]) {
 				if (i % 2 === 0) return i / 2;
 			}
@@ -150,6 +151,11 @@
 	};
 
 	const processKeyUp = (evt: KeyboardEvent) => {
+		//@ts-ignore
+		caretPosition = evt.target.selectionEnd;
+	};
+
+	const processKeyDown = (evt: KeyboardEvent) => {
 		//@ts-ignore
 		caretPosition = evt.target.selectionEnd;
 		// close the menu if the user types out the entire option
@@ -366,6 +372,7 @@
 				content = evt?.target?.value;
 			}}
 			on:keyup={processKeyUp}
+			on:keydown={processKeyDown}
 			on:click={() => {
 				showingSlashMenu = null;
 			}}
