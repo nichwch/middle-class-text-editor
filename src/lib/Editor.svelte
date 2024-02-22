@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { computePosition, offset, shift, arrow, flip } from '@floating-ui/dom';
-	import { text } from '@sveltejs/kit';
+	import { computePosition, shift, flip } from '@floating-ui/dom';
 	import { SvelteComponent, afterUpdate, tick } from 'svelte';
 
 	export let splitFunc: (str: string) => string[] = (text) => text.split('\n');
@@ -116,10 +115,19 @@
 		}
 	};
 
-	afterUpdate(() => {
-		console.log('!!!', document?.activeElement?.selectionEnd);
-		console.log('IND', isOnKeyword(document?.activeElement?.selectionEnd));
-	});
+	$: indexOfCursoredKeyword = isOnKeyword(caretPosition);
+	$: console.log({ indexOfCursoredKeyword });
+
+	// afterUpdate(() => {
+	// 	tick().then(() => {
+	// 		console.log(
+	// 			'!!!2',
+	// 			document?.activeElement?.selectionStart,
+	// 			document?.activeElement?.selectionEnd
+	// 		);
+	// 		console.log('IND2', isOnKeyword(document?.activeElement?.selectionEnd));
+	// 	});
+	// });
 
 	// returns the right boundary if caret position is on left boundary
 	const isOnEndBoundary = (caretPos: number): number | undefined => {
@@ -141,7 +149,7 @@
 		return undefined;
 	};
 
-	const processKeyDown = (evt: KeyboardEvent) => {
+	const processKeyUp = (evt: KeyboardEvent) => {
 		//@ts-ignore
 		caretPosition = evt.target.selectionEnd;
 		// close the menu if the user types out the entire option
@@ -340,8 +348,6 @@
 			value={content}
 			bind:this={textAreaRef}
 			on:input={(evt) => {
-				console.log('!!!', document?.activeElement?.selectionEnd, caretPosition);
-				console.log('IND', isOnKeyword(document?.activeElement?.selectionEnd));
 				editorScrollHeight = textAreaRef?.scrollHeight || 0;
 				// replace dashes with non breaking dashes, so tag components don't get broken
 				//@ts-ignore
@@ -359,13 +365,9 @@
 				//@ts-ignore
 				content = evt?.target?.value;
 			}}
-			on:keydown={processKeyDown}
+			on:keyup={processKeyUp}
 			on:click={() => {
 				showingSlashMenu = null;
-			}}
-			on:selectionchange={(evt) => {
-				//@ts-ignore
-				caretPosition = evt.target.selectionStart;
 			}}
 		/>
 		<!-- THE OVERLAY -->

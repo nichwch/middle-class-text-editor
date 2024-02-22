@@ -32,7 +32,7 @@ project/project/project
 	$: projects = getListFromString(projectInput);
 </script>
 
-<div class="w-full px-5 mt-10 md:mx-auto md:w-[36rem]">
+<div class="w-full px-5 my-10 md:mx-auto md:w-[36rem]">
 	<h1 class="text-2xl mb-3">MIDDLE CLASS TEXT EDITOR</h1>
 	<h2 class="italic">"A rich text editor? In this economy?"</h2>
 	<h2><a class="link" href="https://nicholaschen.io">By Nicholas Chen</a></h2>
@@ -40,7 +40,7 @@ project/project/project
 
 	<p class="mt-3">
 		MIDDLE CLASS TEXT EDITOR is an editor library that sprinkles some rich text features on top of a
-		plain textarea, without becoming a full fledged full-text editor, hopefully gaining most of the
+		plain textarea without becoming a full fledged full-text editor, hopefully gaining most of the
 		advantages without all of the costs.
 	</p>
 	<p class="mt-3">
@@ -54,7 +54,7 @@ project/project/project
 
 	<p>Try changing the projects recognized by # (separate values by newline):</p>
 	<textarea class=" resize-none border border-black h-32 p-2" bind:value={projectInput} />
-
+	<p class="my-3">Type @ to mention a person, type # to mention a project.</p>
 	<Editor
 		bind:content={editorContents}
 		keywordMap={{
@@ -79,39 +79,8 @@ project/project/project
 	<h1 class="text-2xl mt-3">Some nice details:</h1>
 	<p class="mt-3">Moving the cursor into a keyword moves it through that keyword</p>
 	<p class="mt-3">
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
+		Dashes are automatically replaced with non-breaking dashes in keywords. This prevents the
+		styling from falling apart.
 	</p>
-	<p class="mt-3">
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-	</p>
-	<p class="mt-3">
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-	</p>
-	<p class="mt-3">
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-		Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing. Lorem Ipsum for scroll testing.
-	</p>
+	<p class="mt-3"></p>
 </div>
