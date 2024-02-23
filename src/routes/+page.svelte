@@ -54,7 +54,10 @@ project/project/project
 
 	<p>Try changing the projects recognized by # (separate values by newline):</p>
 	<textarea class=" resize-none border border-black h-32 p-2" bind:value={projectInput} />
-	<p class="my-3">Type @ to mention a person, type # to mention a project.</p>
+	<p class="my-3">
+		Type @ to mention a person, type # to mention a project. Hover over a person or project for more
+		information.
+	</p>
 	<Editor
 		bind:content={editorContents}
 		keywordMap={{
@@ -74,16 +77,15 @@ project/project/project
 				allowUnrecognized: true
 			}
 		}}
-		splitFunc={(/** @type {string} */ text) => text.split('\n')}
 	/>
-	<h1 class="text-2xl mt-3">Some nice details:</h1>
+	<h1 class="text-2xl mt-5">Some nice details:</h1>
 	<p class="mt-3">Moving the cursor into a keyword moves it through that keyword</p>
 	<p class="mt-3">
 		Dashes are automatically replaced with non-breaking dashes in keywords. This prevents the
 		styling from falling apart.
 	</p>
 	<p class="mt-3">From what I can tell, it works reasonably well on mobile.</p>
-	<h1 class="text-2xl mt-3">Some things that don't quite work:</h1>
+	<h1 class="text-2xl mt-5">Some things that don't quite work:</h1>
 	<p class="mt-3">
 		You can still get the styling to break by piling a bunch of keywords onto a line. This results
 		in a pretty localized styling failure that doesn't screw up the entire overlay, and it's also
@@ -97,7 +99,7 @@ project/project/project
 	<p class="mt-3">Undo doesn't work after deleting a keyword. This is really annoying.</p>
 	<p class="mt-3"></p>
 
-	<h1 class="text-2xl mt-3">Use MIDDLE CLASS TEXT EDITOR in your project:</h1>
+	<h1 class="text-2xl mt-5">Use MIDDLE CLASS TEXT EDITOR in your project:</h1>
 	<p class="mt-3">
 		It's small enough that you can just copy paste the component into your project, <a
 			class="link"
@@ -113,7 +115,21 @@ project/project/project
 			>You can find the source for the component here, in the repo.</a
 		>
 	</p>
-	<h1 class="text-2xl mt-3">How does it work?</h1>
+	<h1 class="text-2xl mt-5">API Specification</h1>
+	<p class="mt-3">The component takes two props:</p>
+	<p class="mt-3"><b>content:</b> The contents of the textarea.</p>
+	<p class="mt-3">
+		<b>keywordMap:</b> An object, where the keys are regex matches for "keyword" and the values are svelte
+		components that will be rendered over those keywords. In the example above, the @mentions and #projects
+		were keywords.
+	</p>
+	<p class="mt-3">
+		The keyword components accept two props: index, and focusedIndex. index is the order in which
+		the keyword appears on the page, and focusedIndex is the index of the keyword overlapping the
+		caret. This is helpful if you want to highlight keywords when the user moves their caret through
+		one.
+	</p>
+	<h1 class="text-2xl mt-5">How does it work?</h1>
 	<p class="mt-3">Great question! Short answer: By abusing absolute positioning.</p>
 	<p class="mt-3">
 		Long answer: I use three elements positioned absolutely so that they're all overlapping: an
