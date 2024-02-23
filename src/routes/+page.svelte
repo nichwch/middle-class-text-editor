@@ -99,6 +99,19 @@ project/project/project
 	<p class="mt-3">Undo doesn't work after deleting a keyword. This is really annoying.</p>
 	<p class="mt-3"></p>
 
+	<h1 class="text-2xl mt-5">Is MIDDLE CLASS TEXT EDITOR right for you?</h1>
+	<p class="mt-3">
+		This library is powerful, but it has some limitations. Because of the overlay styling strategy
+		(explained below), it's not possible to offer bold, italics, or headers. Adding images and links
+		is theoretically possible but a little involved.
+	</p>
+	<p class="mt-3">
+		However, there are lots of places on the web where you don't need rich text functionality beyond
+		mentions. Instagram photo captions and Slack messages are two good examples of this - Insta
+		captions don't offer rich text at all, while Slack's message editor offers formatting, but is
+		rarely ever used. In both of these cases, the only "rich text" feature that's used is mentions.
+		For these kinds of scenarios, this library is a perfect fit.
+	</p>
 	<h1 class="text-2xl mt-5">Use MIDDLE CLASS TEXT EDITOR in your project:</h1>
 	<p class="mt-3">
 		It's small enough that you can just copy paste the component into your project, <a
