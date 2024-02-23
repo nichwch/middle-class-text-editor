@@ -2,7 +2,6 @@
 	import { computePosition, shift, flip } from '@floating-ui/dom';
 	import { SvelteComponent, afterUpdate, tick } from 'svelte';
 
-	export let splitFunc: (str: string) => string[] = (text) => text.split('\n');
 	export let content: string;
 	export let keywordMap: {
 		[key: string]: {
@@ -13,6 +12,7 @@
 		};
 	} = {};
 
+	const splitFunc: (str: string) => string[] = (text) => text.split('\n');
 	const NON_BREAKING_DASH = '‑';
 	const makeDashesNonBreaking = (str: string) => str.replaceAll('-', NON_BREAKING_DASH);
 	const makeDashesBreaking = (str: string) => str.replaceAll(NON_BREAKING_DASH, '-');
