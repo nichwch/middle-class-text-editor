@@ -4,7 +4,7 @@
 	export let focusedIndex: number;
 </script>
 
-<HoverCard.Root>
+<HoverCard.Root openDelay={0}>
 	<HoverCard.Trigger
 		><button
 			on:click={() => {}}
