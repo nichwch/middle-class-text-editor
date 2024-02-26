@@ -1,20 +1,24 @@
-# create-svelte
+## Middle Class Text Editor
 
-Everything you need to build a Svelte library, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+Slack style mentions implemented in a plain text area.
 
-Read more about creating a library [in the docs](https://kit.svelte.dev/docs/packaging).
 
-## Creating a project
 
-If you're seeing this, you've probably already done this step. Congrats!
+https://github.com/nichwch/middle-class-text-editor/assets/7423703/9b524177-19c5-4a26-9795-96b670cd2ef7
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+## How does it work?
+Great question! Short answer: By abusing absolute positioning.
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+Long answer: I use three elements positioned absolutely so that they're all overlapping: an "underlay div", the textarea, and an "overlay div".
+
+The textarea is where the user types. As they type, the underlay clones the content one for one, but renders keywords differently using a regex match.
+
+The overlay renders all the keywords (again, using a regex match), and positions them absolutely to match their corresponding keyword in the underlay. I use a separate overlay instead of rendering keywords directly in the underlay because otherwise the z-index and stacking context would prevent the keywords from being clickable.
+
+Here's a handy visualization of the setup.
+
+![explanation](https://github.com/nichwch/middle-class-text-editor/assets/7423703/6ab9cc70-6b32-499d-bbcc-c93659b5fe7e)
+
 
 ## Developing
 
